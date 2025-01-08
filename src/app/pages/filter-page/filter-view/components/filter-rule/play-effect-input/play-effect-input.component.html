@@ -1,0 +1,24 @@
+<div class="relative w-full text-center justify-self-start font-mono text-[0.9rem] pl-1 
+grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] items-center col-start-1 row-start-1" #menu>
+  <div [style]="{backgroundColor: '#905FCCFF', background: 'linear-gradient(to top left, #FFF4, transparent)'}" 
+  class="text-[0.6rem] col-start-1 justify-self-start row-start-1 col-start-1 col-end-3 rounded-t-md pl-2 pr-2">
+    Light Beam
+  </div>
+  <div [style]="{backgroundColor: '#905FCCFF', background: 'linear-gradient(to bottom right, #FFF4, transparent)'}" 
+  class="grid grid-cols-[1fr_auto_1.5rem] gap-x-2 justify-items-center items-center w-full rounded-r-md rounded-bl-md
+  col-start-1 col-end-3 row-start-2 h-[2rem] pl-2 border border-main shadow-[1px_1px_0px_1px_#111F]">
+    <button title="Temporary" [style]="{background: playEffect().temp ? '#FFF2' : ''}" class="h-[1.5rem] w-[1.5rem] flex justify-center 
+    items-center justify-self-start shadow-[0px_0px_2px_0px_#111F] rounded-md hover:bg-[#FFF1]" (click)="ToggleTemp()">
+      <span class="material-symbols-outlined text-[1.3rem]">
+        timer
+      </span>
+    </button>
+    <button [style]="{backgroundColor: GetSelectedColor(), background: 'linear-gradient(to bottom right, #FFF6, transparent)'}" class="h-[1.5rem] w-[1.5rem] flex justify-center items-center rounded-md 
+      shadow-[0px_0px_2px_0px_#111F] justify-self-end" (click)="ShowColorMenu()">
+      <div class="w-full h-full rounded-md hover:bg-[#FFF1]"></div>
+    </button>
+    <div [style]="!playEffect().active ? {backgroundColor: '#AAAF', boxShadow: 'inset -2px 0px 4px 0px #000F'} : {backgroundColor: '#B07FFFFF', boxShadow: 'inset -2px 0px 4px -1px #111F'}" 
+    class="w-[1.5rem] rounded-r-md h-full flex justify-items-center items-center cursor-pointer col-start-3" (click)="SwitchActive()">
+  </div>
+</div>
+</div>

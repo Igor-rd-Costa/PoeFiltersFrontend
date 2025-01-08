@@ -1,0 +1,100 @@
+<div class="relative" #wrapper>
+  <div id="filter-rule-heading" class="h-[3rem] bg-main w-full rounded-md flex items-center 
+  pl-4 hover:bg-mainBright cursor-pointer" (click)="ToggleExpand()">
+    <h3 id="filter-rule-heading-content" class="grid grid-cols-[auto_auto_auto_auto_1fr] items-center gap-x-2 text-[1.1rem] text-dark w-full pr-4">
+      <img id="filter-rule-heading-image" [src]="rule().imgSrc" class="w-[2.5rem] h-[2.5rem] rounded-md"> 
+      <span>{{rule().name}}</span>
+      <span class="material-symbols-outlined text-[1.8rem] hover:text-[#333F]" (click)="EditRuleInfo($event)">
+        edit
+      </span>
+      <span class="material-symbols-outlined text-[1.8rem] hover:text-[#333F]" (click)="Delete()">
+        delete
+      </span>
+      <span [style]="{rotate: isExpanded() ? '90deg' : '0deg'}" id="filter-rule-expand-icon" class="material-symbols-outlined justify-self-end">
+        chevron_right
+      </span>
+    </h3>
+  </div>
+  <div [style]="{height: isExpanded() ? 'fit-content' : '0px'}" id="filter-rule-content" class="overflow-hidden text-dark">
+    <div class="grid grid-cols-[1fr_25rem] grid-rows-[auto_1fr] border border-t-0 m-[0.3rem] gap-2 mt-0 bg-[#222F] border-main rounded-b-md shadow-card">
+      @if (!isInEditMode()) {
+      <div class="p-2 h-full grid grid-rows-[auto_1fr] row-start-1 row-end-3 gap-y-2">
+        <button [style]="{backgroundColor: GetStateButtomColor()}" class="w-[90px] cursor-pointer rounded-md 
+        h-[2rem] font-mono uppercase text-dark text-[1rem] shadow-[1px_1px_2px_1px_#000F]" (click)="SwitchState()"> 
+          {{rule().state}}
+        </button>
+        <div class="h-full grid grid-rows-[auto_1fr]">
+          <label class="text-mono text-main text-[0.9rem]">Basetypes</label>
+          <div class="border p-2 border-main rounded-md h-full w-full bg-[#333F] shadow-inner-card">
+            <ul class="flex flex-wrap gap-2">
+              @for (item of items; track $index) {
+                <li class="bg-[#444F] pl-2 pr-2 h-[1.8rem] text-[#AAAF] rounded shadow-card flex gap-x-1 justify-items-center 
+                items-center cursor-pointer">
+                  <p class="w-fit text-nowrap">{{item.name}}</p>
+                  <button class="hover:text-[#DDDF] w-[1.1rem] h-[1.1rem]" (click)="RemoveItem(item)">
+                    <span class="material-symbols-outlined text-[1.1rem]">
+                      close
+                    </span>
+                  </button>
+                </li>
+              }
+              <app-base-type-input [suggestFromCategories]="itemCategories" (basetypeSelect)="AddBaseType($event)"/>
+            </ul>
+        </div>
+        </div>
+      </div>
+  
+      <div class="grid grid-rows-[auto_1fr] gap-y-2 p-2">
+        <div class="relative border border-main rounded-md w-full h-[120px] bg-poe2-item-preview">
+          @if (rule().state !== "Disabled") {
+            <div [style]="GetPreviewStyle()" class="absolute min-w-[160px] h-[29px] top-[33px] left-[54px] border 
+            flex items-center justify-center font-fontin text-[1.02rem] tracking-[0.06em] pl-1 pr-1">{{items.length > 0 ? items[0].name : ""}}</div>
+          }
+        </div>
+
+        <div class="grid grid-cols-2 auto-rows-auto gap-y-2 gap-x-8">
+          <div class="col-start-1 row-start-1"></div>
+          <button class="w-[90px] cursor-pointer rounded-md bg-main bg-grad-bl justify-self-end hover:bg-mainBright
+          font-mono col-start-2 row-start-1 uppercase text-dark text-[1rem] shadow-[1px_1px_2px_1px_#000F]" (click)="ResetStyles()">
+            Reset 
+          </button>
+          
+          <app-sound-input [sound]="rule().style.dropSound" class="col-start-1 row-start-2"/>
+
+          <app-icon-input [icon]="rule().style.dropIcon" class="col-start-1 row-start-3"/>
+
+          <app-play-effect-input [playEffect]="rule().style.dropPlayEffect" class="col-start-1 row-start-4"/>
+
+          <app-color-input heading="Text Color" [color]="rule().style.textColor" (change)="OnTextColorInputChange($event)"/>
+          <app-color-input heading="Border Color" [color]="rule().style.borderColor" (change)="OnBorderColorInputChange($event)"/>
+          <app-color-input heading="Background Color" [color]="rule().style.backgroundColor" (change)="OnBackgroundColorInputChange($event)"/>
+        </div>
+      </div>
+      } @else {
+        <div class="p-2 col-start-1 col-end-3 text-main">
+          <h3 class="text-[1.2rem]">Rule Settings</h3>
+          <form id="filter-rule-wrapper-edit-form" class="text-[1rem] grid grid-cols-[auto_1fr] grid-rows-[1fr_auto] gap-4" (submit)="SaveBlockInfo($event)">
+            <div class="grid gap-2">
+              <div class="">
+                <label class="text-[0.9rem] font-mono">Name</label>
+                <br>
+                <input id="filter-rule-wrapper-edit-form-name-input" class="pl-2 rounded-md outline-none" type="text" [value]="rule().name">
+              </div>
+              <div class="">
+                <label class="text-[0.9rem] font-mono">Image Source</label>
+                <br>
+                <input id="filter-rule-wrapper-edit-form-img-input" class="pl-2 rounded-md outline-none" type="text" [value]="rule().imgSrc">
+              </div>
+            </div>
+            <div class="flex flex-col">
+            </div>
+            <div class="flex row-start-2 col-start-1 col-end-3 gap-x-2 items-end justify-end">
+              <button class="bg-dark hover:bg-darkBright shadow-card text-main p-1 pl-2 pr-2 rounded-md">Save</button>
+              <button type="button" class="bg-dark hover:bg-darkBright shadow-card text-main p-1 pl-2 pr-2 rounded-md" (click)="CancelEdit($event)">Cancel</button>
+            </div>
+          </form>
+        </div>
+      }
+    </div>
+  </div>
+</div>

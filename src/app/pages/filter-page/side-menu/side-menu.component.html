@@ -1,0 +1,25 @@
+<section class="h-screen w-[15rem] bg-dark grid grid-rows-[auto_auto_auto_1fr] justify-items-center gap-y-[2rem]">
+    <h1 class="text-[1.5rem] mt-4 text-main">PoE Filters</h1>
+    <app-filter-select/>
+    <nav class="w-full grid gap-y-[2rem] justify-items-center">
+      <app-menu-section heading="User">
+        <app-menu-item [view]="AppView.USER_ADMIN" imgSrc="" content="Admin" (click)="SwitchView(AppView.USER_ADMIN)"/>
+      </app-menu-section>
+      <app-menu-section heading="Filter">
+        <app-menu-item [view]="AppView.FILTER_STYLES" imgSrc="" content="Styles" (click)="SwitchView(AppView.FILTER_STYLES)"/>
+        <app-menu-item [view]="AppView.FILTER_EXPORT" imgSrc="" content="Export" (click)="SwitchView(AppView.FILTER_EXPORT)"/>
+      </app-menu-section>
+      @if (filter) {
+        @for (section of filter.sections; track section.id) {
+          <app-menu-section [heading]="section.name">
+            @for (block of section.blocks; track block.id) {
+              <app-menu-item [imgSrc]="block.imgSrc" [content]="block.name" (click)="SwitchView(AppView.FILTER_VIEW, block.id)"/>
+            }
+          </app-menu-section>
+        }
+        @if (filter.sections.length === 0) {
+          <app-menu-item content="Filter" (click)="SwitchView(AppView.FILTER_VIEW)"/>
+        }
+      }
+    </nav>
+</section>

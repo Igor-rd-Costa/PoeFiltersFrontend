@@ -1,0 +1,34 @@
+<div [style]="{top: pos.y+'px', left: pos.x+'px', display: isVisible() ? 'grid' : 'none'}"
+class="absolute rounded-md top-[2rem] bg-[#333F] shadow-card" #menu>
+  @if (view() === ViewMode.VOLUME) {
+    <div class="items-center grid grid-cols-[2rem_1fr_1.3rem] w-[10rem] h-[1.5rem] pl-2 pr-2 gap-x-2">
+      <div class="text-main text-[0.9rem]">{{(selected ? selected().volume : 0)}}</div>
+      <div class="relative flex items-center w-full h-full">
+        <div id="sound-input-volume-menu-volume-bar" class="w-full h-[3px] bg-[#DDDF] rounded-md" (mousedown)="OnVolumeMenuMouseDown($event)"></div>
+        <div [style]="{left: (volumePos - 6) + 'px'}" id="sound-input-volume-menu-volume-button" class="absolute w-[12px] 
+        h-[12px] top-[6px] rounded-full bg-[#EEEF] cursor-pointer hover:bg-[#FFFF]" (mousedown)="OnVolumeMenuMouseDown($event)"></div>
+      </div>
+      <button class="h-[1.3rem] w-[1.3rem] text-[#DDDF] hover:text-[#FFFF]" (click)="PlaySelectedSound()">
+        <span class="material-symbols-outlined text-[1.3rem]">
+          play_arrow
+        </span>
+      </button>
+    </div>
+  } @else {
+    <div class="min-w-[10rem] h-[11rem] overflow-scroll p-1 gap-x-2">
+      <ul class="grid gap-y-1">
+        @for(sound of sounds; track $index) {
+          <li [style]="{backgroundColor: (selected && selected().sound === ($index + 1)) ? '#FFF2' : ''}" 
+          class="items-center justify-items-center grid grid-cols-[1fr_1.5rem] pl-1 pr-1 rounded-md cursor-pointer hover:bg-[#FFF1]" (click)="SelectSound($index + 1)">
+            {{sound.name}}
+            <button class="h-[1.3rem] w-[1.3rem] text-[#DDDF] hover:text-[#FFFF]" (click)="OnPlaySoundClick($event, $index)">
+              <span class="material-symbols-outlined text-[1.3rem]">
+                play_arrow
+              </span>
+            </button>
+          </li>
+        }
+      </ul>
+    </div>
+  }
+</div>

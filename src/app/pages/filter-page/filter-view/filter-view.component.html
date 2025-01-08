@@ -1,0 +1,21 @@
+<div class="w-full h-full p-4">
+  <div [style]="{gridTemplateRows: GetTemplateRows()}" class="w-[70%] min-w-[570px] max-w-[1200px] h-screen overflow-y-scroll pr-2 pl-2 relative translate-x-[-50%] gap-y-8 translate-y-[-50%] left-[50%] top-[50%] grid">
+    @for (section of sections; track section.id) {
+      <app-filter-section [section]="section"/>
+    }
+    <div class="border-t border-[#555F] pt-2">
+      <div class="h-[4.5rem] bg-main w-full rounded-md cursor-pointer flex justify-center items-center hover:bg-mainBright" (click)="CreateSection()">
+        <h3 class="text-[1.8rem] text-dark select-none cursor-pointer">
+          Create Section
+        </h3>
+      </div>
+    </div>
+    <!-- <app-general-currency-block/> -->
+  </div>
+  <div class="">
+    <app-color-picker-menu/>
+    <app-icon-options-menu/>
+    <app-sound-menu/>
+    <app-play-effect-menu/>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+<div [style]="{display: isVisible() ? 'grid' : 'none', left: pos.x + 'px', top: pos.y + 'px'}" class="absolute grid 
+grid-rows-[auto_1fr] rounded-md bg-[#333F] w-fit h-fit gap-x-2 pl-2 pr-2 shadow-card" #menu>
+    <div class="text-main text-[0.8rem] font-mono self-end text-start">
+      Color
+    </div>
+    <div class="w-fit h-fit pb-1 border-t border-[#444F]">
+      <div class="h-[68px] w-[190px] flex flex-wrap overflow-scroll gap-1 pt-1 pb-1">
+        @for (color of colors; track $index) {
+          <div [style]="{backgroundColor: GetBackgroundColor(color), background: 'linear-gradient(to bottom right, #FFF6, transparent)'}" 
+          class="h-fit bg-[#FFF1] shadow-card rounded" (click)="SelectColor(color)">
+            <div [title]="color" [style]="{backgroundColor: (selected && selected().color === color) ? '#FFF4' : ''}" class="w-[28px] h-[28px] rounded hover:bg-[#FFF3]">
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+</div>

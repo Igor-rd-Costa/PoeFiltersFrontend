@@ -1,0 +1,19 @@
+<div class="w-full grid gap-y-4 justify-items-center">
+  <h3 class="text-[2rem] w-full text-[#888F] flex items-center justify-center gap-x-1 border-b border-[#555F]">
+    <div class="outline-none" [contentEditable]="isInEditMode()" (keydown)="OnKeyDown($event)" (blur)="OnBlur()" #nameInput>{{section.name}}</div>
+    <span class="material-symbols-outlined text-[1.5rem] cursor-pointer hover:text-[#AAAF]" (click)="Edit()">
+      edit
+    </span>
+    <span class="material-symbols-outlined text-[1.5rem] cursor-pointer hover:text-[#AAAF]" (click)="Delete()">
+      delete
+    </span>
+  </h3>
+  @for (block of section.blocks; track block.id) {
+    <app-filter-block-wrapper [block]="block"/>
+  }
+  <div class="h-[4.5rem] bg-main w-full rounded-md cursor-pointer flex justify-center items-center hover:bg-mainBright" (click)="CreateBlock()">
+    <h3 class="text-[1.8rem] text-dark select-none cursor-pointer">
+      Create Block
+    </h3>
+  </div>
+</div>

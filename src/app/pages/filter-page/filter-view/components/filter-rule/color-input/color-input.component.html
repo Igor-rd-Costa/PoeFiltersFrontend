@@ -1,0 +1,19 @@
+<div class="relative w-full text-center justify-self-start font-mono text-[0.9rem] 
+grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] items-center col-start-1 row-start-1" #wrapper>
+  <div [style]="{backgroundColor: '#905FCCFF', background: 'linear-gradient(to bottom left, #FFF4, transparent)'}" 
+  class="text-[0.6rem] justify-self-start row-start-1 col-start-2 col-end-3 rounded-t-md pl-2 pr-2">
+    {{heading}}
+  </div>
+  <div [style]="{backgroundColor: '#905FCCFF', background: 'linear-gradient(to top right, #FFF4, transparent)'}" 
+  class="grid grid-cols-[1.5rem_1fr] gap-x-2 justify-items-start items-center bg-main w-full rounded-l-md rounded-br-md
+  col-start-1 col-end-3 row-start-2 h-[2rem] border border-main shadow-[-1px_1px_0px_1px_#111F]">
+  <div [style]="!color()!.active ? {backgroundColor: '#AAAF', boxShadow: 'inset 1px 0px 4px 0px #000F'} : {backgroundColor: '#B07FFFFF', boxShadow: 'inset 1px 0px 4px -1px #111F'}" 
+  class="w-[1.5rem] rounded-l-md h-full flex justify-items-center items-center cursor-pointer" (click)="SwitchActive()">
+    <div class="hover:bg-[#FFF1] h-full w-full"></div>
+  </div>
+  <div style="background-size: cover;" class="h-[1.5rem] w-[1.5rem] rounded-md bg-[url('/color_transparent_bg.png')]">
+    <div [style]="{backgroundColor: 'rgba('+color()!.r+','+color()!.g+','+color()!.b+','+color()!.a+')', background: 'linear-gradient(to bottom right, #FFF6, transparent)'}" 
+    class="h-[1.5rem] w-[1.5rem] rounded-md cursor-pointer shadow-[0px_0px_2px_0px_#111F]" (click)="OpenColorPicker($event)"></div>
+  </div>
+</div>
+</div>

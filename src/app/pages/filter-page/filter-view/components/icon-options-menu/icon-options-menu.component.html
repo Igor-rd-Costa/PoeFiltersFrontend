@@ -1,0 +1,50 @@
+<div [style]="{display: isVisible() ? 'grid' : 'none', left: pos.x + 'px', top: pos.y + 'px'}" class="absolute grid 
+grid-rows-[auto_1fr] rounded-md bg-[#333F] w-fit h-fit gap-x-2 pl-2 pr-2 shadow-card" #menu>
+    <div class="text-main text-[0.8rem] font-mono self-end text-start">
+      @switch (viewMode()) {
+        @case (ViewMode.SHAPE) {
+          Shape
+        }
+        @case (ViewMode.SIZE) {
+          Size
+        }
+        @case (ViewMode.COLOR) {
+          Color
+        }
+      }
+    </div>
+    <div class="w-fit h-fit pb-1 border-t border-[#444F]">
+      @switch (viewMode()) {
+        @case (ViewMode.SHAPE) {
+          <div class="w-[190px] h-[68px] flex flex-wrap overflow-scroll gap-1 pt-1 pb-1">
+            @for (shape of shapes; track $index) {
+              <div [style]="{backgroundColor: (selected && selected().shape === shape) ? '#FFF3' : ''}" class="bg-[#FFF1] hover:bg-[#FFF2] shadow-card rounded p-[2px]" (click)="SelectShape(shape)">
+                <div [title]="shape" [style]="{background: 'url(\'/PoeFilterIcons.png\')', backgroundSize: '264px 864px', backgroundPosition: GetSelectedIconXPos()+'px '+(-24 * 3 * $index)+'px'}" class="w-[24px] h-[24px]">
+                </div>
+              </div>
+            }
+          </div>
+        }
+        @case (ViewMode.SIZE) {
+          <div class="h-[36px] w-[94px] flex flex-wrap overflow-scroll gap-1 pt-1 pb-1">
+            @for (size of sizes; track $index) {
+              <div [style]="{backgroundColor: (selected && selected().size === size) ? '#FFF3' : ''}" class="bg-[#FFF1] hover:bg-[#FFF2] shadow-card rounded p-[2px] h-fit" (click)="SelectSize(size)">
+                <div [title]="size" [style]="{background: 'url(\'/PoeFilterIcons.png\')', backgroundSize: '264px 864px', backgroundPosition: GetSelectedIconXPos()+'px '+(GetSelectedIconYPos()-(24 * (2 - $index)))+'px'}" class="w-[24px] h-[24px]">
+                </div>
+              </div>
+            }
+          </div>
+        }
+        @case (ViewMode.COLOR) {
+          <div class="h-[68px] w-[190px] flex flex-wrap overflow-scroll gap-1 pt-1 pb-1">
+            @for (color of colors; track $index) {
+              <div [style]="{backgroundColor: (selected && selected().color === color) ? '#FFF3' : ''}" class="h-fit bg-[#FFF1] hover:bg-[#FFF2] shadow-card rounded p-[2px]" (click)="SelectColor(color)">
+                <div [title]="color" [style]="{background: 'url(\'/PoeFilterIcons.png\')', backgroundSize: '264px 864px', backgroundPosition: (-24 * $index)+'px '+GetSelectedIconYPos()+'px'}" class="w-[24px] h-[24px]">
+                </div>
+              </div>
+            }
+          </div>
+        }
+      }
+    </div>
+</div>

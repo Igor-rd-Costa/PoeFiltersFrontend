@@ -1,0 +1,44 @@
+<div class="w-full h-screen grid grid-rows-1 justify-items-center">
+  <div class="w-[50%] pt-4 pb-4 h-full rounded-md grid grid-rows-[auto_auto_1fr_auto]">
+    <h2 class="text-[2.5rem] h-[5rem] pt-2 pb-2 text-darkBright 
+    rounded-t-md bg-main w-full text-center shadow-card">Load Filter</h2>
+    <li [style]="{height: '6rem'}" class="relative p-2 pl-4 pr-4 m-2 rounded-md bg-gradient-to-br from-[#333F] to-[#222F] text-[4rem] text-main 
+    list-none cursor-pointer hover:from-[#3A3A3AFF] hover:to-[#2A2A2AFF] shadow-card" (click)="ShowCreateFilterForm()" #createWrapper>
+      <span id="filter-create-icon" class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">+</span>
+      <form id="filter-create-form" [style]="{display: 'none', opacity: 0}" class="text-[1rem] grid gap-y-2" [formGroup]="createFilterForm" (submit)="CreateFilter($event)">
+        <h3 class="text-[1.3rem] mb-2">Create Filter</h3>
+        <div class="flex gap-x-2">
+          <label>Name</label>
+          <input class="rounded-md outline-none pl-2 text-black" [formControl]="createFilterForm.controls.name">
+        </div>
+        <div class="w-full flex justify-end gap-x-2">
+          <button type="button" class="bg-main hover:bg-mainBright relative text-[1rem] text-dark rounded-md w-fit p-1 pl-4 pr-4 
+          uppercase shadow-[2px_2px_2px_0px_#0005]" (click)="CancelCreateFilter($event)">Cancel</button>
+          <button type="submit" class="bg-main disabled:bg-[#777F] hover:bg-mainBright relative text-[1rem] text-dark rounded-md w-fit p-1 pl-4 pr-4 
+          uppercase shadow-[2px_2px_2px_0px_#0005]" [disabled]="!createFilterForm.valid">Create</button>
+        </div>
+      </form>
+    </li>
+    <ul class="w-full grid gap-y-4 p-2 auto-rows-[6rem]">
+      @for (filter of filters; track filter.id) {
+        <li class="p-2 pl-4 pr-4 rounded-md bg-gradient-to-br from-[#333F] to-[#222F] h-[6rem] shadow-card
+        cursor-pointer hover:from-[#3A3A3AFF] hover:to-[#2A2A2AFF]" (click)="LoadFilter(filter.id)">
+          <div class="grid grid-cols-[1fr_auto]">
+            <h3 class="text-main text-[1.5rem]">
+              {{filter.name}}
+            </h3>
+            <p class="text-[#CCCF]">
+              {{GetTimeDif(filter.modified_at)}}
+            </p>
+          </div>
+          <div class="flex mt-2 justify-end gap-x-4">
+            <button class="bg-main hover:bg-mainBright text-[1rem] text-dark rounded-md w-fit p-1 pl-4 pr-4 
+            uppercase shadow-[2px_2px_2px_0px_#0005]" (click)="DeleteFilter($event, filter.id)">Delete</button>
+          </div>
+        </li>
+      }
+    </ul>
+    <div class="h-[5rem] rounded-b-md bg-main shadow-card"></div>
+  </div>
+  
+</div>

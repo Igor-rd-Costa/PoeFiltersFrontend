@@ -1,0 +1,21 @@
+@if (viewService.View() === AppView.FILTER_LOAD) {
+  <app-load-filter-page/>
+} @else {
+  <div class="grid grid-cols-[auto_1fr] max-h-[100dvh] max-w-[100dvw] overflow-hidden">
+    <app-side-menu/>
+    @switch (viewService.View()) {
+      @case (AppView.USER_ADMIN) {
+        <app-user-admin-view/>
+      }
+      @case (AppView.FILTER_STYLES) {
+        
+      }
+      @case (AppView.FILTER_EXPORT) {
+        <app-filter-export-view/>
+      }
+      @default {
+        <app-filter-view/>
+      }
+    }
+  </div>
+}

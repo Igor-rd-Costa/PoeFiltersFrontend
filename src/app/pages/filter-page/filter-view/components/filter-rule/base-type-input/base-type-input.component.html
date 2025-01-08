@@ -1,0 +1,26 @@
+@if (!isInAddMode()) {
+  <div class="bg-[#444F] w-[4rem] h-[1.8rem] text-[#AAAF] rounded shadow-card grid justify-items-center 
+  items-center cursor-pointer hover:bg-[#4A4A4AFF]" (click)="AddMode()">
+    <span class="material-symbols-outlined">
+      add
+    </span>
+  </div>
+} @else {
+  <div class="relative h-[1.8rem] text-[#222F] flex items-center bg-transparent gap-x-1">
+    <input id="filter-rule-basetype-input" class="min-w-[5rem] w-fit h-full pl-2 outline-none 
+    text-[#AAAF] rounded shadow-card bg-[#444F] hover:bg-[#4A4A4AFF]" (input)="OnInput($event)" #input>
+    <button type="button" class="h-[1.8rem] w-[1.8rem] text-[#AAAF] rounded shadow-card bg-[#444F] flex 
+    items-center justify-center hover:bg-[#4A4A4AFF]" (click)="Cancel()">
+      <span class="material-symbols-outlined text-[1.5rem]">
+        close
+      </span>
+    </button>
+    @if (showSuggestionBox() && suggestedBaseTypes.length > 0) {
+      <ul class="absolute p-1 top-[2rem] left-0 max-h-[7.5rem] rounded-md bg-[#444F] shadow-card min-w-[12rem] w-fit overflow-scroll">
+        @for (baseType of suggestedBaseTypes; track $index) {
+          <li class="p-2 rounded-md text-[#AAAF] hover:bg-[#4A4A4AFF] cursor-pointer" (click)="SelectBaseType(baseType)">{{baseType.name}}</li>
+        }
+      </ul>
+    }
+  </div>
+}

@@ -1,0 +1,35 @@
+<div id="color-picker-menu" [style]="{top: pos.y + 'px', left: pos.x + 'px', display: isColorPickerOpen() ? 'grid' : 'none'}" 
+class="w-[24rem] h-[14rem] bg-[#333F] grid-cols-[1fr_auto_auto] rounded-md absolute shadow-card p-2 gap-1" #menu>
+<div class="col-start-1">
+  <div [style]="{backgroundColor: ToHSLA()}" class="w-[1.5rem] h-[1.5rem]">
+
+  </div>
+</div>
+<div [style]="{background: GetGradColor()}" 
+id="color-picker-gradient" class="rounded relative w-[10rem] h-[10rem] col-start-2" (mousedown)="OnColorGradientMouseDown($event)">
+  <div id="color-picker-gradient-selection-guide" [style]="{top: selector.y + 'px'}" class="absolute left-0 bg-black border-t border-b border-white w-full h-[3px]"></div>
+  <div id="color-picker-gradient-selection-guide" [style]="{left: selector.x + 'px'}" class="absolute top-0 bg-black border-l border-r border-white w-[3px] h-full"></div>
+</div>
+<div class="col-start-2">
+  <div id="color-picker-opacity-slider" class="w-full h-[0.75rem] rounded-md" (mousedown)="OnOpacitySliderMouseDown($event)" #opacitySlider>
+    <div [style]="{background: GetOpacityGrad()}" class="w-full h-full rounded-md relative">
+      <div [style]="{left: opacitySliderPos - 3 + 'px'}" class="absolute h-full w-[3px] bg-black border-l border-r border-white"></div>
+    </div>
+  </div>
+</div>
+<div class="row-start-1 col-start-3">
+  <div id="color-picker-gradient-slider" class="w-[0.75rem] h-full rounded-md" (mousedown)="OnGradientSliderMouseDown($event)" #gradientSlider>
+    <div class="w-full h-full rounded-md relative">
+      <div [style]="{top: gradientSliderPos - 3 + 'px'}" class="absolute h-[3px] w-full bg-black border-t border-b border-white"></div>
+    </div>
+  </div>
+</div>
+<div class="w-full flex gap-x-2 p-1 items-center font-mono col-start-1 col-end-3">
+  <button class="bg-[#444F] hover:bg-[#555F] rounded-md shadow-card pl-2 pr-2" (click)="Save()">Ok</button>
+  <button class="bg-[#444F] hover:bg-[#555F] rounded-md shadow-card pl-2 pr-2" (click)="Cancel()">Cancel</button>
+  <div class="w-full flex gap-x-1 items-center justify-end">
+    <div [style]="{backgroundColor: ToHSLA()}" class="w-[1.5rem] h-[1.5rem]"></div>
+    {{ToHSLA()}}
+  </div>
+</div>
+</div>

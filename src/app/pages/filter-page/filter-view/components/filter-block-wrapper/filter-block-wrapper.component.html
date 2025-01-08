@@ -1,0 +1,61 @@
+<div class="relative w-full" #wrapper>
+  <div id="filter-block-wrapper-heading-top" class="h-[2.25rem] bg-main w-full rounded-t-md cursor-pointer" 
+  (mouseenter)="OnHover()" (mouseleave)="OnLeave($event)" (click)="ToggleExpand()"></div>
+  <h3 id="filter-block-wrapper-heading-content" class="absolute left-4 top-[0.5rem] flex 
+  items-center gap-x-2 text-[1.8rem] select-none cursor-pointer text-dark" (click)="ToggleExpand()">
+    <img id="filter-block-wrapper-heading-image" [src]="block().imgSrc" class="w-[3.5rem] h-[3.5rem] rounded-md"> 
+    {{block().name}}
+    <span class="material-symbols-outlined text-[1.8rem] hover:text-[#333F]" (click)="EditBlock($event)">
+      edit
+    </span>
+    <span class="material-symbols-outlined text-[1.8rem] hover:text-[#333F]" (click)="Delete()">
+      delete
+    </span>
+  </h3>
+  <div [style]="{height: 0}" class="overflow-hidden" id="filter-block-wrapper-content">
+  <div class="p-2 pt-4 pb-4 grid gap-2">
+    @if (!isInEditMode()) {
+      @for (rule of block().rules; track rule.id) {
+        <app-filter-rule [itemCategories]="block().allowedCategories" [rule]="rule"/>
+      }
+      <div id="filter-rule-heading" class="h-[3rem] text-[1.5rem] text-dark bg-main w-full rounded-md flex items-center justify-center 
+      pl-4 hover:bg-mainBright cursor-pointer" (click)="CreateRule()">
+        Create Rule
+      </div>
+    } @else {
+      <h3 class="text-[1.2rem] text-main">Rule Settings</h3>
+      <form id="filter-block-wrapper-edit-form" class="text-[1rem] text-main grid grid-cols-[auto_1fr] grid-rows-[1fr_auto] gap-4" (submit)="SaveBlockInfo($event)">
+        <div class="grid gap-2">
+          <div class="">
+            <label class="text-[0.9rem] font-mono">Name</label>
+            <br>
+            <input id="filter-block-wrapper-edit-form-name-input" class="pl-2 rounded-md outline-none" type="text" [value]="block().name">
+          </div>
+          <div class="">
+            <label class="text-[0.9rem] font-mono">Image Source</label>
+            <br>
+            <input id="filter-block-wrapper-edit-form-img-input" class="pl-2 rounded-md outline-none" type="text" [value]="block().imgSrc">
+          </div>
+        </div>
+        <div class="flex flex-col">
+          <label class="font-mono text-[0.9rem]">Allowed BaseType Categories</label>
+          <ul class="w-full h-[8rem] border overflow-scroll p-2 gap-2 border-main rounded-md shadow-inner-card flex flex-wrap">
+            @for (category of baseTypeCategories; track $index) {
+              <li [style]="IsCategoryIncluded(category) ? {backgroundColor: '#555F', color: '#DDDF'} : {}" class="bg-[#444F] w-fit h-[1.8rem] pl-2 pr-2 text-[#AAAF] rounded shadow-card grid justify-items-center 
+              items-center cursor-pointer hover:bg-[#4A4A4AFF]" (click)="ToggleIncludedCategories(category)">
+              {{category.name}}
+              </li>
+            }
+          </ul>
+        </div>
+        <div class="flex row-start-2 col-start-1 col-end-3 gap-x-2 items-end justify-end">
+          <button class="bg-dark hover:bg-darkBright shadow-card text-main p-1 pl-2 pr-2 rounded-md">Save</button>
+          <button type="button" class="bg-dark hover:bg-darkBright shadow-card text-main p-1 pl-2 pr-2 rounded-md" (click)="CancelEdit($event)">Cancel</button>
+        </div>
+      </form>
+    }
+  </div>
+  </div>
+  <div id="filter-block-wrapper-heading-bottom" class="h-[2.25rem] bg-main w-full rounded-b-md cursor-pointer" 
+  (mouseenter)="OnHover()" (mouseleave)="OnLeave($event)" (click)="ToggleExpand()"></div>
+</div>
