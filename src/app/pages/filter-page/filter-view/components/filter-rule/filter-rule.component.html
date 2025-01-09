@@ -47,14 +47,14 @@
       <div class="grid grid-rows-[auto_1fr] gap-y-2 p-2">
         <div class="relative border border-main rounded-md w-full h-[120px] bg-poe2-item-preview">
           @if (rule().state !== "Disabled") {
-            <div [style]="GetPreviewStyle()" class="absolute min-w-[160px] h-[29px] top-[33px] left-[54px] border 
-            flex items-center justify-center font-fontin text-[1.02rem] tracking-[0.06em] pl-1 pr-1">{{items.length > 0 ? items[0].name : ""}}</div>
+            <div [style]="GetPreviewStyle()" class="absolute top-[33px] left-[54px] border 
+            flex items-center justify-center font-fontin tracking-[0.06em] p-1">{{items.length > 0 ? items[0].name : ""}}</div>
           }
         </div>
 
         <div class="grid grid-cols-2 auto-rows-auto gap-y-2 gap-x-8">
-          <div class="col-start-1 row-start-1"></div>
-          <button class="w-[90px] cursor-pointer rounded-md bg-main bg-grad-bl justify-self-end hover:bg-mainBright
+          <app-font-size-input [fontSize]="rule().style.fontSize" (fontsizechange)="OnFontSizeChange($event)"/>
+          <button class="w-[90px] h-fit self-end cursor-pointer rounded-md bg-main bg-grad-bl justify-self-end hover:bg-mainBright
           font-mono col-start-2 row-start-1 uppercase text-dark text-[1rem] shadow-[1px_1px_2px_1px_#000F]" (click)="ResetStyles()">
             Reset 
           </button>

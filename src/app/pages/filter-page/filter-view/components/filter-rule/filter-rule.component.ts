@@ -7,11 +7,12 @@ import { SoundInputComponent } from "./sound-input/sound-input.component";
 import { PlayEffectInputComponent } from "./play-effect-input/play-effect-input.component";
 import { ItemService, Item, ItemCategory } from '../../../../../services/ItemService';
 import { BaseTypeInputComponent } from './base-type-input/base-type-input.component';
+import { FontSizeInputComponent } from "./font-size-input/font-size-input.component";
 
 @Component({
   selector: 'app-filter-rule',
   standalone: true,
-  imports: [ColorInputComponent, IconInputComponent, SoundInputComponent, PlayEffectInputComponent, BaseTypeInputComponent],
+  imports: [ColorInputComponent, IconInputComponent, SoundInputComponent, PlayEffectInputComponent, BaseTypeInputComponent, FontSizeInputComponent],
   templateUrl: './filter-rule.component.html',
 })
 export class FilterRuleComponent implements AfterViewInit {
@@ -211,6 +212,10 @@ export class FilterRuleComponent implements AfterViewInit {
     }
   }
 
+  OnFontSizeChange(fontSize: number) {
+    this.rule().style.fontSize = fontSize;
+  }
+
   protected ResetStyles() {
     this.rule().style = this.filterService.GetDefaultRuleStyle();
   }
@@ -223,8 +228,11 @@ export class FilterRuleComponent implements AfterViewInit {
     const tx = this.rule().style.textColor;
     const bc = this.rule().style.borderColor;
     const bgC = this.rule().style.backgroundColor;
+    const basePx = 16.32;
+    const fs = basePx * (this.rule().style.fontSize / 32);
 
     let stl = {
+      fontSize: fs + 'px',
       color: tx.active ? `rgba(${tx.r}, ${tx.g}, ${tx.b}, ${tx.a})` : 'rgba(220, 220, 220, 1)',
       borderColor: bc.active ? `rgba(${bc.r}, ${bc.g}, ${bc.b}, ${bc.a})` : 'transparent',
       backgroundColor: bgC.active ? `rgba(${bgC.r}, ${bgC.g}, ${bgC.b}, ${bgC.a})` : 'rgba(0,0,0, 0.7)',

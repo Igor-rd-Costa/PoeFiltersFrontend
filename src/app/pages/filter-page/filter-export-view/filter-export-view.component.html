@@ -1,6 +1,6 @@
-<div class="h-full w-full grid justify-items-center items-center">
+<div class="h-full w-full grid grid-cols-3 grid-rows-1 justify-items-center items-center">
   <div class="w-[22rem] h-[35rem] border border-main shadow-card cursor-pointer rounded-md text-dark bg-main grid 
-  grid-rows-2 items-center justify-items-center hover:bg-mainBright" (click)="SaveAndDownload()">
+  grid-rows-2 items-center justify-items-center bg-grad-br hover:bg-mainBright" (click)="SaveAndDownload()">
     <span class="material-symbols-outlined text-[6rem] border-8 border-dark rounded-full  
     w-[8rem] h-[8rem] flex justify-center items-center">
       save
@@ -10,7 +10,17 @@
     </div>
   </div>
   <div class="w-[22rem] h-[35rem] border border-main shadow-card cursor-pointer rounded-md text-dark bg-main grid 
-  grid-rows-2 items-center justify-items-center hover:bg-mainBright" (click)="Download()">
+  grid-rows-2 items-center justify-items-center bg-grad-br hover:bg-mainBright" (click)="Save()">
+    <span class="material-symbols-outlined text-[6rem] border-8 border-dark rounded-full  
+    w-[8rem] h-[8rem] flex justify-center items-center">
+      save
+    </span>
+    <div class="text-[1.8rem] text-center self-start">
+      Save
+    </div>
+  </div>
+  <div class="w-[22rem] h-[35rem] border border-main shadow-card cursor-pointer rounded-md text-dark bg-main grid 
+  grid-rows-2 items-center justify-items-center bg-grad-br hover:bg-mainBright" (click)="Download()">
     <span class="material-symbols-outlined text-[6rem] border-8 border-dark rounded-full  
     w-[8rem] h-[8rem] flex justify-center items-center">
       cloud

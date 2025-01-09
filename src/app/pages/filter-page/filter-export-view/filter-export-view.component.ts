@@ -11,12 +11,16 @@ export class FilterExportViewComponent {
 
   constructor(private filterService: FilterService) {}
 
-  async SaveAndDownload() {
-    await this.filterService.Save();
-    this.filterService.Download();
+  Save() {
+    return this.filterService.Save();
+  }
+  
+  Download() {
+    return this.filterService.Download();
   }
 
-  Download() {
-    this.filterService.Download();
+  async SaveAndDownload() {
+    await this.Save();
+    this.Download();
   }
 }

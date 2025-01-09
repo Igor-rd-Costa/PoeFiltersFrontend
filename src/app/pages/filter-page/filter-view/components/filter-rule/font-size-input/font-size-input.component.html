@@ -1,0 +1,18 @@
+<div class="relative w-full text-center justify-self-start font-mono text-[0.9rem] pl-1 
+grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] items-center col-start-1 row-start-1" #menu>
+  <div [style]="{backgroundColor: '#905FCCFF', background: 'linear-gradient(to top left, #FFF4, transparent)'}" 
+  class="text-[0.6rem] col-start-1 justify-self-start row-start-1 col-start-1 col-end-3 rounded-t-md pl-2 pr-2">
+    Font Size
+  </div>
+  <div [style]="{backgroundColor: '#905FCCFF', background: 'linear-gradient(to bottom right, #FFF4, transparent)'}" 
+  class="grid grid-cols-[1.5rem_1fr_1.5rem] gap-x-2 justify-items-center items-center bg-main w-full rounded-r-md rounded-bl-md
+  col-start-1 col-end-3 row-start-2 h-[2rem] pl-2 border border-main shadow-[1px_1px_0px_1px_#111F]">
+    <div>
+      {{fontSize}}
+    </div>
+    <div class="w-full relative flex items-center" #sliderWrapper>
+      <div class="w-full h-[3px] bg-[#DDDF]" (mousedown)="OnVolumeMouseDown($event)"></div>
+      <div [style]="{left: offset() - 6+'px'}" id="font-size-input-slider" class="absolute w-[12px] h-[12px] rounded-full bg-[#EEEF] cursor-pointer hover:bg-[#FFFF]" (mousedown)="OnVolumeMouseDown($event)"></div>
+    </div>
+  </div>
+</div>

@@ -117,6 +117,7 @@ export type DropPlayEffect = {
 
 type RuleStyle = {
   id?: string,
+  fontSize: number,
   textColor: Color,
   borderColor: Color,
   backgroundColor: Color,
@@ -202,6 +203,7 @@ export class FilterService {
   private filter = signal<FilterInfo|null>(null)
   private backend = AppComponent.Backend() + 'filter/';
   private readonly defaultRuleStyle: RuleStyle = {
+    fontSize: 32,
     textColor: {active: true, r: 170, g: 158, b: 129, a: 1},
     borderColor: {active: false, r: 250, g: 250, b: 250, a: 1},
     backgroundColor: {active: true, r: 0, g: 0, b: 0, a: 0.7},
@@ -224,6 +226,7 @@ export class FilterService {
 
   GetDefaultRuleStyle(): RuleStyle {
     return {
+      fontSize: this.defaultRuleStyle.fontSize,
       textColor: {...this.defaultRuleStyle.textColor},
       borderColor: {...this.defaultRuleStyle.borderColor},
       backgroundColor: {...this.defaultRuleStyle.backgroundColor},
@@ -312,7 +315,6 @@ export class FilterService {
   Save() {
     return new Promise<void>(resolve => {
       const filter = this.filter();
-      console.log("Saving", filter);
       if (filter === null) {
         resolve();
       }
@@ -471,7 +473,9 @@ export class FilterService {
   }
 
   private GetRuleStyle(id: string) {
+    //TODO Implement this
     const style: RuleStyle = {
+      fontSize: 32,
       textColor: {active: true, r: 0, g: 0, b: 0, a: 255},
       borderColor: {active: true, r: 0, g: 0, b: 0, a: 255},
       backgroundColor: {active: true, r: 0, g: 0, b: 0, a: 255},
@@ -514,6 +518,9 @@ export class FilterService {
         for (let k = 0; k < b.rules.length; k++) {
           const r = b.rules[k];
           const ruleStyle = (typeof r.style === 'string') ? this.GetRuleStyle(r.style) : r.style;
+          if (!ruleStyle.fontSize) {
+            ruleStyle.fontSize = 32;
+          }
           const rule: FilterRuleInfo = {
             id: r.id,
             name: r.name,
@@ -529,7 +536,6 @@ export class FilterService {
       }
       filterInfo.sections.push(section);
     }
-    console.log("Got", filterInfo);
     return filterInfo;
   }
 }
