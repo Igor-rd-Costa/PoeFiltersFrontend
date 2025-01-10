@@ -431,7 +431,7 @@ export class FilterService {
     let block: FilterBlockInfo|null = null;
     for (let i = 0; i < filter.sections.length; i++) {
       const section = filter.sections[i];
-      for (let j = 0; i < section.blocks.length; j++) {
+      for (let j = 0; j < section.blocks.length; j++) {
         if (section.blocks[j].id === blockId) {
           block = section.blocks[j];
           break;
