@@ -1,12 +1,17 @@
 import { AfterViewInit, Component, ElementRef, Input, signal, ViewChild } from '@angular/core';
-import { FilterBlockWrapperComponent } from '../filter-block-wrapper/filter-block-wrapper.component';
 import { FilterSectionInfo, FilterService } from '../../../../../services/FilterService';
+import { FilterBlockWrapperComponent } from '../filter-block-wrapper/filter-block-wrapper.component';
 
 @Component({
   selector: 'app-filter-section',
   standalone: true,
   imports: [FilterBlockWrapperComponent],
   templateUrl: './filter-section.component.html',
+  styles: `
+    .active > div {
+      background-color: #AAAF;
+    }
+  `
 })
 export class FilterSectionComponent implements AfterViewInit {
   @ViewChild('nameInput') nameInput!: ElementRef<HTMLElement>
@@ -22,6 +27,25 @@ export class FilterSectionComponent implements AfterViewInit {
 
   CreateBlock() {
     this.filterService.CreateBlock(this.section.id);
+  }
+
+  OnDragOver(event: DragEvent) {
+    event.preventDefault();
+    if (!event.target) {
+      return;
+    }
+    const t = event.target as HTMLElement;
+    if (t.id === "filter-block-drag-target" && !t.classList.contains('active')) {
+      t.classList.add('active');
+    }
+  }
+
+  OnMouseLeave(event: MouseEvent) {
+    if (!event.target) {
+      return;
+    }
+    const t = event.target as HTMLElement;
+    t.classList.remove('active');
   }
 
   Edit() {

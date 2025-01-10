@@ -1,16 +1,16 @@
 <div class="relative" #wrapper>
   <div id="filter-rule-heading" class="h-[3rem] bg-main w-full rounded-md flex items-center 
-  pl-4 hover:bg-mainBright cursor-pointer" (click)="ToggleExpand()">
-    <h3 id="filter-rule-heading-content" class="grid grid-cols-[auto_auto_auto_auto_1fr] items-center gap-x-2 text-[1.1rem] text-dark w-full pr-4">
-      <img id="filter-rule-heading-image" [src]="rule().imgSrc" class="w-[2.5rem] h-[2.5rem] rounded-md"> 
-      <span>{{rule().name}}</span>
-      <span class="material-symbols-outlined text-[1.8rem] hover:text-[#333F]" (click)="EditRuleInfo($event)">
+  pl-4 hover:bg-mainBright cursor-pointer" (dragstart)="OnDragStart()" (click)="ToggleExpand()" draggable="true">
+    <h3 id="filter-rule-heading-content" class="grid grid-cols-[auto_auto_auto_auto_1fr] items-center gap-x-2 text-[1.1rem] text-dark w-full pr-4" draggable="false">
+      <img id="filter-rule-heading-image" [src]="rule().imgSrc" class="w-[2.5rem] h-[2.5rem] rounded-md" draggable="false"> 
+      <span draggable="false">{{rule().name}}</span>
+      <span class="material-symbols-outlined text-[1.8rem] hover:text-[#333F]" (click)="EditRuleInfo($event)" draggable="false">
         edit
       </span>
-      <span class="material-symbols-outlined text-[1.8rem] hover:text-[#333F]" (click)="Delete()">
+      <span class="material-symbols-outlined text-[1.8rem] hover:text-[#333F]" (click)="Delete()" draggable="false">
         delete
       </span>
-      <span [style]="{rotate: isExpanded() ? '90deg' : '0deg'}" id="filter-rule-expand-icon" class="material-symbols-outlined justify-self-end">
+      <span [style]="{rotate: isExpanded() ? '90deg' : '0deg'}" id="filter-rule-expand-icon" class="material-symbols-outlined justify-self-end" draggable="false">
         chevron_right
       </span>
     </h3>

@@ -211,6 +211,7 @@ export class FilterService {
     dropIcon: {active: false, size: 0, shape: 'Circle', color: 'Blue'},
     dropPlayEffect: {active: false, color: 'Blue', temp: false}
   }
+  private dragTarget: FilterBlockInfo|FilterRuleInfo|null = null;
 
   constructor(private http: HttpClient) {}
 
@@ -537,5 +538,168 @@ export class FilterService {
       filterInfo.sections.push(section);
     }
     return filterInfo;
+  }
+
+  IsDragDropInProgress() {
+    return this.dragTarget !== null;
+  }
+
+  DragDrop(target: FilterBlockInfo|FilterRuleInfo) {
+    if (this.dragTarget !== null) {
+      return;
+    }
+    this.dragTarget = target;
+    const onDragEnd = (event: DragEvent) => {
+      document.removeEventListener('drop', onDragEnd);
+      if (!event.target || !this.dragTarget) {
+        return;
+      }
+      const t = event.target as HTMLElement;
+      if ((target as FilterBlockInfo).rules) {
+        if (t.id !== "filter-block-drag-target") {
+          return;
+        }
+      } else {
+        if (t.id !== "filter-rule-drag-target") {
+          return;
+        }
+      }
+      t.classList.remove('active');
+      const pos = t.attributes.getNamedItem('data-dragPosition')?.value;
+      if (!pos) {
+        console.error("Block/Rule drop target missing required position attribute");
+        return;
+      }
+      if ((target as FilterBlockInfo).rules) {
+        const sectionId = t.attributes.getNamedItem('data-section')?.value;
+        if (!sectionId) {
+          console.error("Block drop target missing required section attribute");
+          return;
+        }
+        this.SetBlockPosition(target.id, sectionId, parseInt(pos));
+      } else {
+        const blockId = t.attributes.getNamedItem('data-block')?.value;
+        if (!blockId) {
+          console.error("Rule drop target missing required block attribute");
+          return;
+        }
+        this.SetRulePosition(target.id, blockId, parseInt(pos));
+      }
+      this.dragTarget = null;
+    }
+    document.addEventListener('drop', onDragEnd);
+  }
+
+  private SetBlockPosition(blockId: string, targetSectionId: string, position: number) {
+    const sections = this.filter()?.sections;
+    if (!sections) {
+      return;
+    }
+    let srcSection: FilterSectionInfo|null = null;
+    let trgSection: FilterSectionInfo|null = null;
+    let currentPos = 0;
+    for (let i = 0; i < sections.length; i++) {
+      const s = sections[i];
+      for (let j = 0; j < s.blocks.length; j++) {
+        if (s.blocks[j].id === blockId) {
+          srcSection = s;
+          currentPos = j;
+          break;
+        }
+      }
+      if (s.id === targetSectionId) {
+        trgSection = s;
+      }
+      if (srcSection && trgSection) {
+        break;
+      }
+    }
+    if (!srcSection || !trgSection) {
+      return;
+    }
+    const sameSection = srcSection.id === trgSection.id;
+    if (sameSection) {
+      if (position === currentPos || position === currentPos + 1) { // Same position
+        return;
+      }
+      if (position > currentPos) {
+        for (let i = trgSection.blocks[currentPos].position + 1; i < position ; i++) {
+          trgSection.blocks[i].position--;
+        }
+        position--;
+      } else {
+        for (let i = position; i < currentPos; i++) {
+          trgSection.blocks[i].position++;
+        }
+      }
+      trgSection.blocks[currentPos].position = position;
+    } else {
+      for (let i = currentPos + 1; i < srcSection.blocks.length; i++) {
+        srcSection.blocks[i].position--;
+      }
+      const block = srcSection.blocks.splice(currentPos, 1)[0];
+      block.position = position;
+      if (position !== trgSection.blocks.length) {
+        for (let i = position; i < trgSection.blocks.length; i++) {
+          trgSection.blocks[i].position++;
+        }
+      }
+      trgSection.blocks.push(block);
+    }
+    trgSection.blocks = trgSection.blocks.sort(FilterService.SortFn);
+  }
+
+  private SetRulePosition(ruleId: string, blockId: string, position: number) {
+    const sections = this.filter()?.sections;
+    if (!sections) {
+      return;
+    }
+    let trgBlock: FilterBlockInfo|null = null;
+    let trgRule: FilterRuleInfo|null = null;
+    for (let i = 0; i < sections.length; i++) {
+      const s = sections[i];
+      for (let j = 0; j < s.blocks.length; j++) {
+        const b = s.blocks[j];
+        if (b.id === blockId) {
+          trgBlock = b;
+          for (let k = 0; k < b.rules.length; k++) {
+            const r = b.rules[k];
+            if (r.id === ruleId) {
+              trgRule = r;
+              break;
+            }
+          }
+          break;
+        }
+      }
+      if (trgBlock) {
+        break;
+      }
+    }
+    if (!trgBlock || !trgRule) {
+      return;
+    }
+    if (position === trgRule.position || position === (trgRule.position + 1)) { // Same position
+      return;
+    }
+    if (position > trgRule.position) {
+      for (let i = trgRule.position + 1; i < position ; i++) {
+        trgBlock.rules[i].position--;
+      }
+      position--;
+    } else {
+      for (let i = position; i < trgRule.position; i++) {
+        trgBlock.rules[i].position++;
+      }
+    }
+    trgRule.position = (position === trgBlock.rules.length) ? (trgBlock.rules.length - 1) : position;
+    trgBlock.rules = trgBlock.rules.sort(FilterService.SortFn);
+  }
+
+  private static SortFn(a: FilterBlockInfo|FilterRuleInfo, b:FilterBlockInfo|FilterRuleInfo) {
+    if (a.position < b.position) {
+      return -1;
+    }
+    return 1;
   }
 }

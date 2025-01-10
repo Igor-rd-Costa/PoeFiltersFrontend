@@ -17,6 +17,10 @@ import { GetHTMLContentHeight } from '../../../../../utils/helpers';
     .hovered {
       @apply bg-mainBright;
     }
+
+    .active > div {
+      background-color: #AAAF;
+    }
   `
 })
 export class FilterBlockWrapperComponent implements AfterViewInit {
@@ -63,6 +67,29 @@ export class FilterBlockWrapperComponent implements AfterViewInit {
       bottom?.classList.remove("hovered");
       top?.classList.remove("hovered");
     }
+  }
+
+  OnDragStart() {
+    this.filterService.DragDrop(this.block());
+  }
+
+  OnDragOver(event: DragEvent) {
+    event.preventDefault();
+    if (!event.target) {
+      return;
+    }
+    const t = event.target as HTMLElement;
+    if (t.id === "filter-rule-drag-target") {
+      t.classList.add('active');
+    }
+  }
+
+  OnMouseLeave(event: MouseEvent) {
+    if (!event.target) {
+      return;
+    }
+    const t = event.target as HTMLElement;
+    t.classList.remove('active');
   }
 
   async ToggleExpand() {

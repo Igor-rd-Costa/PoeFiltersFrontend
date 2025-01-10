@@ -19,7 +19,7 @@ export class FilterRuleComponent implements AfterViewInit {
   @ViewChild("wrapper") wrapper!: ElementRef<HTMLElement>;
   @Input() itemCategories: string[] = [];
   rule = model.required<FilterRuleInfo>();
-  isExpanded = signal<boolean>(true);
+  isExpanded = signal<boolean>(false);
   isInEditMode = signal<boolean>(false);
   items: Item[] = [];
   categories: ItemCategory[] = [];
@@ -222,6 +222,10 @@ export class FilterRuleComponent implements AfterViewInit {
 
   protected Delete() {
     this.filterService.DeleteRule(this.rule().id);
+  }
+
+  protected OnDragStart() {
+    this.filterService.DragDrop(this.rule());
   }
 
   protected GetPreviewStyle() {
