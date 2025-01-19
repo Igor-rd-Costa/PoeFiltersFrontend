@@ -32,12 +32,22 @@ export class IconOptionsMenuComponent {
 
   Show(target: HTMLElement, viewMode: IconOptionsMenuViewMode, selected: ModelSignal<DropIcon>) {
     const rect = target.getBoundingClientRect();
-    this.pos.x = rect.left;
-    this.pos.y = rect.top + rect.height;
-    console.log(this.pos, target);
+    let top = rect.top + 48;
+    let left = rect.left;
+    this.isVisible.set(true);
     this.selected = selected;
     this.viewMode.set(viewMode);
-    this.isVisible.set(true);
+    setTimeout(() => {
+      const mRect = this.menu.nativeElement.getBoundingClientRect();
+      if ((left + mRect.width) > window.innerWidth) {
+        left = window.innerWidth - (mRect.width + 48);
+      }
+      if ((top + mRect.height) > window.innerHeight) {
+        top = rect.top - mRect.height;
+      }
+      this.pos.x = Math.max(left, 0);
+      this.pos.y = Math.max(top, 0);
+    });
     const onDocMouseDown = (event: MouseEvent) => {
       if (event.target === null || this.menu.nativeElement.contains(event.target as HTMLElement)) {
         return;

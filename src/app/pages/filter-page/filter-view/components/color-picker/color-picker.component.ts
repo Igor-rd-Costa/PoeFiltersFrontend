@@ -1,4 +1,4 @@
-import { Component, computed, ElementRef, Input, ModelSignal, signal, ViewChild } from '@angular/core';
+import { Component, computed, effect, ElementRef, Input, ModelSignal, signal, ViewChild } from '@angular/core';
 import { Color, ColorHSV, ColorHSVA, ColorRGBA } from '../../../../../services/FilterService';
 import { Observable, Subscriber } from 'rxjs';
 
@@ -73,6 +73,13 @@ export class ColorPickerMenuComponent {
     return rgb;
   })
 
+  constructor() {
+    effect(() => {
+      const visible = this.isColorPickerOpen();
+      console.log(visible ? "Open" : "Close");
+    })
+  }
+
   GetGradColor() {
     return `linear-gradient(to bottom, white, black), linear-gradient(to right, white, hsl(${this.gradBaseHSV().h}, 100%, 50%))`;
   }
@@ -83,16 +90,25 @@ export class ColorPickerMenuComponent {
   }
 
   Open(target: HTMLElement, color: ModelSignal<Color>) {
-    const top = target.getBoundingClientRect().top;
-    const left = target.getBoundingClientRect().left;
-    this.pos.x = left;
-    this.pos.y = top + 36;
+    const rect = target.getBoundingClientRect();
+    let top = rect.top + 48;
+    let left = rect.left;
+    this.isColorPickerOpen.set(true);
     this.initialColor = color();
-    this.isColorPickerOpen.set(true); 
     this.SetOpacitySliderPos();
     this.SetGradientSliderPos();
     this.SetGradientSelectorPos();
-
+    setTimeout(() => {
+      const mRect = this.menu.nativeElement.getBoundingClientRect();
+      if ((left + mRect.width) > window.innerWidth) {
+        left = window.innerWidth - (mRect.width + 48);
+      }
+      if ((top + mRect.height) > window.innerHeight) {
+        top = rect.top - mRect.height;
+      }
+      this.pos.x = Math.max(left, 0);
+      this.pos.y = Math.max(top, 0);
+    });
     const onDocMouseDown = (event: MouseEvent) => {
       if (this.isSelecting()) {
         return;
@@ -102,12 +118,7 @@ export class ColorPickerMenuComponent {
         return;
       }
       if (t.closest("#color-picker-menu") === null) {
-        this.isColorPickerOpen.set(false);
-        if (this.initialColor) {
-          //this.value.set(this.initialColor)
-        }
-        //this.value = null;
-        this.initialColor = null;
+        this.Cancel();
         document.removeEventListener('mousedown', onDocMouseDown);
       }
     }
@@ -277,6 +288,7 @@ export class ColorPickerMenuComponent {
     }
     this.subscriber?.complete();
     this.subscriber = null;
+    this.initialColor = null;
     this.isColorPickerOpen.set(false);
   }
 }

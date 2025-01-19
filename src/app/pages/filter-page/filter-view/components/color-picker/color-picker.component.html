@@ -26,7 +26,6 @@ id="color-picker-gradient" class="rounded relative w-[10rem] h-[10rem] col-start
 </div>
 <div class="w-full flex gap-x-2 p-1 items-center font-mono col-start-1 col-end-3">
   <button class="bg-[#444F] hover:bg-[#555F] rounded-md shadow-card pl-2 pr-2" (click)="Save()">Ok</button>
-  <button class="bg-[#444F] hover:bg-[#555F] rounded-md shadow-card pl-2 pr-2" (click)="Cancel()">Cancel</button>
   <div class="w-full flex gap-x-1 items-center justify-end">
     <div [style]="{backgroundColor: ToHSLA()}" class="w-[1.5rem] h-[1.5rem]"></div>
     {{ToHSLA()}}
