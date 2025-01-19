@@ -1,8 +1,9 @@
-import { Component, ElementRef, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, effect, ElementRef, signal, ViewChild } from '@angular/core';
 import { FilterData, FilterService } from '../../services/FilterService';
 import { AppView, ViewService } from '../../services/ViewService';
 import { GetHTMLContentHeight } from '../../utils/helpers';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthService } from '../../services/AuthService';
 
 @Component({
   selector: 'app-load-filter-page',
@@ -10,7 +11,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
   imports: [ReactiveFormsModule],
   templateUrl: './load-filter-page.component.html',
 })
-export class LoadFilterPageComponent {
+export class LoadFilterPageComponent implements AfterViewInit {
   @ViewChild("createWrapper") createWrapper!: ElementRef<HTMLElement>;
   protected isCreateFilterVisible = signal<boolean>(false);
   protected createFilterForm = new FormGroup({
@@ -18,11 +19,19 @@ export class LoadFilterPageComponent {
   });
   protected filters: FilterData[] = [];
 
-  constructor(private filterService: FilterService, private viewService: ViewService) {
-    this.filterService.GetFiltersInfo().then(filters => {
-      this.filters = filters;
-    });
+  constructor(private filterService: FilterService, private viewService: ViewService, protected authService: AuthService) {
+    effect(() => {
+      if (this.authService.IsLogged()) {
+        this.filterService.GetFiltersInfo().then(filters => {
+          this.filters = filters;
+          filters.forEach(f => console.log(f.modified_at.toString()))
+        });
+        this.authService.GetUserInfo();
+      }
+    })
   }
+  
+  async ngAfterViewInit() {}
 
   GetTimeDif(date: Date) {
     const now = new Date(Date.now());
@@ -62,7 +71,6 @@ export class LoadFilterPageComponent {
         icon.style.display = "none";
       }
       this.createWrapper.nativeElement.style.height = "fit-content";
-      console.log("Actual H:", this.createWrapper.nativeElement.getBoundingClientRect().height)
       if (form) {
         form.style.display = "grid"; 
       }
@@ -98,7 +106,7 @@ export class LoadFilterPageComponent {
 
   async CreateFilter(event: SubmitEvent) {
     event.preventDefault();
-    if (!this.createFilterForm.valid) {
+    if (!this.createFilterForm.valid || !this.authService.IsLogged()) {
       return;
     }
     if (await this.filterService.CreateFilter(this.createFilterForm.controls.name.value!)) {
@@ -123,5 +131,9 @@ export class LoadFilterPageComponent {
         }
       }
     }
+  }
+
+  Login() {
+    this.authService.Login();
   }
 }

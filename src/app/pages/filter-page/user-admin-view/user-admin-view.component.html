@@ -4,7 +4,7 @@
     <button class="w-fit rounded-md p-2 bg-main text-dark shadow-card hover:bg-mainBright" (click)="UpdateItems()">Update Items</button>
   </div>
   <label class="mt-4 font-mono text-[0.9rem] text-main">PoE2 Item Categories</label>
-  <div class="border border-main rounded-md h-[15rem] p-2">
+  <div class="border border-main rounded-md h-[250px] p-2">
     <ul class="flex flex-wrap gap-2 font-mono text-[1.1rem] text-[#AAAF]">
       @for (category of categories; track $index) {
         <li class="rounded-md bg-[#444F] h-[2rem] flex gap-x-2 items-center pl-2 pr-2">{{category.name}}
@@ -26,7 +26,7 @@
       }
     </select>
   </div>
-  <div class="border border-main rounded-md h-[15rem] p-2">
+  <div class="border border-main rounded-md h-[250px] p-2">
     <ul class="flex flex-wrap gap-2 font-mono text-[1.1rem] text-[#AAAF]">
       @for (item of items; track $index) {
         <li class="rounded-md bg-[#444F] h-[2rem] flex gap-x-2 items-center pl-2 pr-2">{{item.name}}</li>

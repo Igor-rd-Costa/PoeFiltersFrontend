@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { ItemService, Item, ItemCategory } from '../../../services/ItemService';
+import { AuthService } from '../../../services/AuthService';
+import { AppView, ViewService } from '../../../services/ViewService';
 
 @Component({
   selector: 'app-user-admin-view',
@@ -7,11 +9,18 @@ import { ItemService, Item, ItemCategory } from '../../../services/ItemService';
   imports: [],
   templateUrl: './user-admin-view.component.html',
 })
-export class UserAdminViewComponent {
+export class UserAdminViewComponent implements AfterViewInit {
   categories: ItemCategory[] = [];
   items: Item[] = [];
 
-  constructor(private itemService: ItemService) {
+  constructor(private itemService: ItemService, private authService: AuthService, private viewService: ViewService) {}
+  
+  async ngAfterViewInit() {
+    const user = this.authService.User();
+    if (user === null || user.isAdmin === false) {
+      this.viewService.SetView(AppView.FILTER_VIEW);
+      return;  
+    }
     this.GetCategories();
   }
 

@@ -3,6 +3,7 @@ import { FilterRuleComponent } from '../filter-rule/filter-rule.component';
 import { FilterBlockInfo, FilterService } from '../../../../../services/FilterService';
 import { ItemCategory, ItemService } from '../../../../../services/ItemService';
 import { GetHTMLContentHeight } from '../../../../../utils/helpers';
+import { AuthService } from '../../../../../services/AuthService';
 
 @Component({
   selector: 'app-filter-block-wrapper',
@@ -30,7 +31,7 @@ export class FilterBlockWrapperComponent implements AfterViewInit {
   protected isInEditMode = signal<boolean>(false);
   baseTypeCategories: ItemCategory[] = [];
 
-  constructor(private filterService: FilterService, private itemService: ItemService) {
+  constructor(private filterService: FilterService, private itemService: ItemService, protected authService: AuthService) {
     effect(() => {
       if (this.isInEditMode()) {
         this.GetBaseTypeCategories();

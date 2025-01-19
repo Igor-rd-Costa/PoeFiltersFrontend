@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Input, signal, ViewChild } from '@angular/core';
 import { FilterSectionInfo, FilterService } from '../../../../../services/FilterService';
 import { FilterBlockWrapperComponent } from '../filter-block-wrapper/filter-block-wrapper.component';
+import { AuthService } from '../../../../../services/AuthService';
 
 @Component({
   selector: 'app-filter-section',
@@ -8,6 +9,10 @@ import { FilterBlockWrapperComponent } from '../filter-block-wrapper/filter-bloc
   imports: [FilterBlockWrapperComponent],
   templateUrl: './filter-section.component.html',
   styles: `
+    :host {
+      width: 100%;
+    }
+
     .active > div {
       background-color: #AAAF;
     }
@@ -18,7 +23,7 @@ export class FilterSectionComponent implements AfterViewInit {
   @Input({required: true}) section!: FilterSectionInfo;
   protected isInEditMode = signal<boolean>(false);
 
-  constructor(private filterService: FilterService) {}
+  constructor(private filterService: FilterService, protected authService: AuthService) {}
   
   ngAfterViewInit(): void {
     const rect = this.nameInput.nativeElement.getBoundingClientRect();

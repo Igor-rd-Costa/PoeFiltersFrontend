@@ -266,6 +266,7 @@ export class FilterService {
       this.http.get<FilterInfo[]>(this.backend, {withCredentials: true}).subscribe({
         next: (filters => {
           for (let i = 0; i < filters.length; i++) {
+            console.log(filters[i].modified_at);
             filters[i].modified_at = new Date(filters[i].modified_at)
           }
           resolve(filters);
