@@ -16,7 +16,7 @@ grid-rows-[auto_1fr] rounded-md bg-[#333F] w-fit h-fit gap-x-2 pl-2 pr-2 shadow-
     <div class="w-fit h-fit pb-1 border-t border-[#444F]">
       @switch (viewMode()) {
         @case (ViewMode.SHAPE) {
-          <div class="w-[590px] h-[68px] flex flex-wrap overflow-scroll gap-1 pt-1 pb-1">
+          <div class="w-[190px] h-[68px] flex flex-wrap overflow-scroll gap-1 pt-1 pb-1">
             @for (shape of shapes; track $index) {
               <div [style]="{backgroundColor: (selected && selected().shape === shape) ? '#FFF3' : ''}" class="bg-[#FFF1] hover:bg-[#FFF2] shadow-card rounded p-[2px]" (click)="SelectShape(shape)">
                 <div [title]="shape" [style]="{background: 'url(\'/PoeFilterIcons.png\')', backgroundSize: '264px 864px', backgroundPosition: GetSelectedIconXPos()+'px '+(-24 * 3 * $index)+'px'}" class="w-[24px] h-[24px]">
