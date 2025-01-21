@@ -121,41 +121,15 @@ export class FilterRuleComponent implements AfterViewInit {
     if (!this.isExpanded()) {
       await this.ToggleExpand();
     }
-    //this.GetBaseTypeCategories();
     this.isInEditMode.set(true);  
   }
-
-  // ToggleIncludedCategories(category: ItemCategory) {
-  //   if (!this.rule().allowedCategories) {
-  //     return;
-  //   }
-  //   for (let i = 0; i < this.rule().allowedCategories!.length; i++) {
-  //     if (this.rule().allowedCategories![i] === category.id) {
-  //       this.rule().allowedCategories!.splice(i, 1);
-  //       return;
-  //     }
-  //   }
-  //   this.rule().allowedCategories!.push(category.id);
-  // }
-
-  // IsCategoryIncluded(category: ItemCategory) {
-  //   if (!this.rule().allowedCategories) {
-  //     return;
-  //   }
-  //   for (let i = 0; i < this.rule().allowedCategories!.length; i++) {
-  //     if (this.rule().allowedCategories![i] === category.id) {
-  //       return true;
-  //     }
-  //   }
-  //   return false;
-  // }
 
   CancelEdit(event: MouseEvent) {
     event.stopPropagation();
     this.isInEditMode.set(false);
   }
 
-  SaveBlockInfo(event: SubmitEvent) {
+  SaveRuleInfo(event: SubmitEvent) {
     event.preventDefault();
     const form = this.wrapper.nativeElement.querySelector("#filter-rule-wrapper-edit-form") as HTMLElement|null;
     if (!form) {

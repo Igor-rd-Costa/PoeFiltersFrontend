@@ -28,7 +28,7 @@ export class LoadFilterPageComponent implements AfterViewInit {
         });
         this.authService.GetUserInfo();
       }
-    })
+    });
   }
   
   async ngAfterViewInit() {}

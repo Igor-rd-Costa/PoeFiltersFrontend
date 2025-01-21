@@ -22,18 +22,34 @@
         <div class="w-[90%] h-[1px] pointer-events-none"></div>
       </div>
       @for (rule of block().rules; track rule.id) {
-        <div class="w-full">
-          <app-filter-rule [itemCategories]="block().allowedCategories" [rule]="rule"/>
-          <div id="filter-rule-drag-target" [attr.data-block]="block().id" class="w-full grid justify-items-center pt-3 pb-3 h-fit" 
-          [attr.data-dragPosition]="$index + 1" (dragover)="OnDragOver($event)" (dragleave)="OnMouseLeave($event)">
+        @if (rule.type === 0) {
+          <div class="w-full">
+              <app-filter-rule [itemCategories]="block().allowedCategories" [rule]="CastToRule(rule)"/>
+              <div id="filter-rule-drag-target" [attr.data-block]="block().id" class="w-full grid justify-items-center pt-3 pb-3 h-fit" 
+              [attr.data-dragPosition]="$index + 1" (dragover)="OnDragOver($event)" (dragleave)="OnMouseLeave($event)">
+                <div class="w-[90%] h-[1px] pointer-events-none"></div>
+              </div>
+          </div>
+        } @else {
+          <div class="w-full">
+            <app-filter-rule-block [blockId]="block().id" [itemCategories]="block().allowedCategories" [ruleBlock]="CastToRuleBlock(rule)"/>
+            <div id="filter-rule-drag-target" [attr.data-block]="block().id" class="w-full grid justify-items-center pt-3 pb-3 h-fit" 
+            [attr.data-dragPosition]="$index + 1" (dragover)="OnDragOver($event)" (dragleave)="OnMouseLeave($event)">
             <div class="w-[90%] h-[1px] pointer-events-none"></div>
           </div>
         </div>
+        }
       }
-      <div id="filter-rule-heading" class="h-[3rem] mb-[calc(1.5rem+1px)] text-[1.5rem] text-dark bg-main w-full rounded-md flex items-center justify-center 
-      pl-4 hover:bg-mainBright cursor-pointer" (click)="CreateRule()">
-        Create Rule
-      </div>
+      <div class="flex gap-x-4">
+        <div id="filter-rule-heading" class="h-[3rem] mb-[calc(1.5rem+1px)] text-[1.5rem] text-dark bg-main w-full rounded-md flex items-center justify-center 
+        pl-4 hover:bg-mainBright cursor-pointer" (click)="CreateRule()">
+          Create Rule
+        </div>
+        <div id="filter-rule-heading" class="h-[3rem] mb-[calc(1.5rem+1px)] text-[1.5rem] text-dark bg-main w-full rounded-md flex items-center justify-center 
+        pl-4 hover:bg-mainBright cursor-pointer" (click)="CreateRuleBlock()">
+          Create RuleBlock
+        </div>
+    </div>
     } @else {
       <div class="pt-4 pb-4">
         <h3 class="text-[1.2rem] text-main">Rule Settings</h3>

@@ -73,13 +73,6 @@ export class ColorPickerMenuComponent {
     return rgb;
   })
 
-  constructor() {
-    effect(() => {
-      const visible = this.isColorPickerOpen();
-      console.log(visible ? "Open" : "Close");
-    })
-  }
-
   GetGradColor() {
     return `linear-gradient(to bottom, white, black), linear-gradient(to right, white, hsl(${this.gradBaseHSV().h}, 100%, 50%))`;
   }

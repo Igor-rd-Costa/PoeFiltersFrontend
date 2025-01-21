@@ -1,14 +1,15 @@
 import { AfterViewInit, Component, effect, ElementRef, model, signal, ViewChild } from '@angular/core';
 import { FilterRuleComponent } from '../filter-rule/filter-rule.component';
-import { FilterBlockInfo, FilterService } from '../../../../../services/FilterService';
+import { FilterBlockInfo, FilterRuleBlockInfo, FilterRuleInfo, FilterService } from '../../../../../services/FilterService';
 import { ItemCategory, ItemService } from '../../../../../services/ItemService';
 import { GetHTMLContentHeight } from '../../../../../utils/helpers';
 import { AuthService } from '../../../../../services/AuthService';
+import { FilterRuleBlockComponent } from "../filter-rule-block/filter-rule-block.component";
 
 @Component({
   selector: 'app-filter-block-wrapper',
   standalone: true,
-  imports: [FilterRuleComponent],
+  imports: [FilterRuleComponent, FilterRuleBlockComponent],
   templateUrl: './filter-block-wrapper.component.html',
   styles: `
     :host {
@@ -68,6 +69,14 @@ export class FilterBlockWrapperComponent implements AfterViewInit {
       bottom?.classList.remove("hovered");
       top?.classList.remove("hovered");
     }
+  }
+
+  CastToRule(rule: FilterRuleInfo|FilterRuleBlockInfo) {
+    return rule as FilterRuleInfo;
+  }
+
+  CastToRuleBlock(ruleBlock: FilterRuleInfo|FilterRuleBlockInfo) {
+    return ruleBlock as FilterRuleBlockInfo;
   }
 
   OnDragStart() {
@@ -150,6 +159,10 @@ export class FilterBlockWrapperComponent implements AfterViewInit {
 
   CreateRule() {
     this.filterService.CreateRule(this.block().id);
+  }
+
+  CreateRuleBlock() {
+    this.filterService.CreateRuleBlock(this.block().id);
   }
 
   async EditBlock(event: MouseEvent) {

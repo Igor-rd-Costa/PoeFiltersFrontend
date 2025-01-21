@@ -128,7 +128,12 @@ type RuleStyle = {
 
 type FilterRuleState = "Show"|"Hide"|"Disabled";
 
+enum FilterRuleItemType {
+  RULE, RULE_BLOCK
+}
+
 type FilterRule = {
+  type: FilterRuleItemType,
   id: string,
   name: string,
   state: FilterRuleState,
@@ -137,12 +142,20 @@ type FilterRule = {
   imgSrc: string,
 }
 
+type FilterRuleBlock = {
+  type: FilterRuleItemType,
+  id: string,
+  name: string,
+  allowUserCreatedRules: boolean,
+  rules: FilterRule[],
+}
+
 type FilterBlock = {
   id: string,
   name: string,
   imgSrc: string,
   allowedCategories: string[],
-  rules: FilterRule[];
+  rules: (FilterRule|FilterRuleBlock)[];
 }
 
 type FilterSection = {
@@ -162,6 +175,7 @@ export type Filter = {
 }
 
 export type FilterRuleInfo = {
+  type: FilterRuleItemType,
   id: string,
   name: string,
   state: FilterRuleState,
@@ -171,13 +185,22 @@ export type FilterRuleInfo = {
   position: number,
 }
 
+export type FilterRuleBlockInfo = {
+  type: FilterRuleItemType,
+  id: string,
+  name: string,
+  allowUserCreatedRules: boolean,
+  rules: FilterRuleInfo[],
+  position: number,
+}
+
 export type FilterBlockInfo = {
   id: string,
   position: number,
   name: string,
   imgSrc: string,
   allowedCategories: string[],
-  rules: FilterRuleInfo[]
+  rules: (FilterRuleInfo|FilterRuleBlockInfo)[]
 }
 
 export type FilterSectionInfo = {
@@ -211,7 +234,7 @@ export class FilterService {
     dropIcon: {active: false, size: 0, shape: 'Circle', color: 'Blue'},
     dropPlayEffect: {active: false, color: 'Blue', temp: false}
   }
-  private dragTarget: FilterBlockInfo|FilterRuleInfo|null = null;
+  private dragTarget: FilterBlockInfo|FilterRuleBlockInfo|FilterRuleInfo|null = null;
 
   constructor(private http: HttpClient) {}
 
@@ -397,7 +420,7 @@ export class FilterService {
       if (section.id === sectionId) {
         const block: FilterBlockInfo = {
           id: v4(),
-          name: "New Block",
+          name: "Unnamed Block",
           imgSrc: "",
           position: section.blocks.length,
           allowedCategories: [],
@@ -424,7 +447,51 @@ export class FilterService {
     }
   }
 
-  CreateRule(blockId: string) {
+  CreateRule(blockId: string, ruleBlockId?: string) {
+    const filter = this.filter();
+    if (filter === null) {
+      return;
+    }
+    let target: FilterBlockInfo|FilterRuleBlockInfo|null = null;
+    for (let i = 0; i < filter.sections.length; i++) {
+      const section = filter.sections[i];
+      for (let j = 0; j < section.blocks.length; j++) {
+        if (section.blocks[j].id === blockId) {
+          if (ruleBlockId === undefined) {
+            target = section.blocks[j];
+          } else {
+            for (let k = 0; k < section.blocks[j].rules.length; k++) {
+              const r = section.blocks[j].rules[k];
+              if (r.type === FilterRuleItemType.RULE_BLOCK && r.id === ruleBlockId) {
+                target = r as FilterRuleBlockInfo;
+                break;
+              }
+            }
+          }
+          break;
+        }
+      }
+      if (target !== null) {
+        break;
+      }
+    }
+    if (target === null) {
+      return;
+    }
+    const rule: FilterRuleInfo = {
+      type: FilterRuleItemType.RULE,
+      id: v4(),
+      name: "Unnamed Rule",
+      imgSrc: "",
+      state: "Disabled",
+      style: this.GetDefaultRuleStyle(),
+      items: [],
+      position: target.rules.length
+    }
+    target.rules.push(rule);
+  }
+
+  CreateRuleBlock(blockId: string) {
     const filter = this.filter();
     if (filter === null) {
       return;
@@ -445,16 +512,15 @@ export class FilterService {
     if (block === null) {
       return;
     }
-    const rule: FilterRuleInfo = {
+    const ruleBlock: FilterRuleBlockInfo = {
+      type: FilterRuleItemType.RULE_BLOCK,
       id: v4(),
-      name: "Unamed Rule",
-      imgSrc: "",
-      state: "Disabled",
-      style: this.GetDefaultRuleStyle(),
-      items: [],
+      name: "Unnamed RuleBlock",
+      allowUserCreatedRules: false,
+      rules: [],
       position: block.rules.length
     }
-    block.rules.push(rule);
+    block.rules.push(ruleBlock);
   }
 
   DeleteRule(id: string) {
@@ -465,7 +531,26 @@ export class FilterService {
     for (let i = 0; i < filter.sections.length; i++) {
       for (let j = 0; j < filter.sections[i].blocks.length; j++) {
         for (let k = 0; k < filter.sections[i].blocks[j].rules.length; k++) {
-          if (filter.sections[i].blocks[j].rules[k].id === id) {
+          const r = filter.sections[i].blocks[j].rules[k];
+          if (r.id === id && r.type === FilterRuleItemType.RULE) {
+            filter.sections[i].blocks[j].rules.splice(k, 1);
+            return;
+          }
+        }
+      }
+    }
+  }
+
+  DeleteRuleBlock(id: string) {
+    const filter = this.filter();
+    if (filter === null) {
+      return;
+    }
+    for (let i = 0; i < filter.sections.length; i++) {
+      for (let j = 0; j < filter.sections[i].blocks.length; j++) {
+        for (let k = 0; k < filter.sections[i].blocks[j].rules.length; k++) {
+          const r = filter.sections[i].blocks[j].rules[k];
+          if (r.id === id && r.type === FilterRuleItemType.RULE_BLOCK) {
             filter.sections[i].blocks[j].rules.splice(k, 1);
             return;
           }
@@ -518,25 +603,28 @@ export class FilterService {
           rules: []
         };
         for (let k = 0; k < b.rules.length; k++) {
-          const r = b.rules[k];
-          const ruleStyle = (typeof r.style === 'string') ? this.GetRuleStyle(r.style) : r.style;
-          if (!ruleStyle.fontSize) {
-            ruleStyle.fontSize = 32;
+          if (b.rules[k].type !== FilterRuleItemType.RULE_BLOCK) {
+            const r = b.rules[k] as FilterRuleInfo;
+            const ruleStyle = (typeof r.style === 'string') ? this.GetRuleStyle(r.style) : r.style;
+            if (!ruleStyle.fontSize) {
+              ruleStyle.fontSize = 32;
+            }
+            const rule: FilterRuleInfo = {
+              type: FilterRuleItemType.RULE,
+              id: r.id,
+              name: r.name,
+              imgSrc: r.imgSrc,
+              state: r.state,
+              style: ruleStyle,
+              items: [...r.items],
+              position: k,
+            }
+            block.rules.push(rule);
           }
-          const rule: FilterRuleInfo = {
-            id: r.id,
-            name: r.name,
-            imgSrc: r.imgSrc,
-            state: r.state,
-            style: ruleStyle,
-            items: [...r.items],
-            position: k,
-          }
-          block.rules.push(rule);
         }
         section.blocks.push(block);
-      }
-      filterInfo.sections.push(section);
+        }
+        filterInfo.sections.push(section);
     }
     return filterInfo;
   }
@@ -545,7 +633,7 @@ export class FilterService {
     return this.dragTarget !== null;
   }
 
-  DragDrop(target: FilterBlockInfo|FilterRuleInfo) {
+  DragDrop(target: FilterBlockInfo|FilterRuleBlockInfo|FilterRuleInfo) {
     if (this.dragTarget !== null) {
       return;
     }
@@ -556,14 +644,12 @@ export class FilterService {
         return;
       }
       const t = event.target as HTMLElement;
-      if ((target as FilterBlockInfo).rules) {
-        if (t.id !== "filter-block-drag-target") {
-          return;
-        }
-      } else {
+      if ((target as FilterRuleInfo).type !== undefined) {
         if (t.id !== "filter-rule-drag-target") {
           return;
         }
+      } else if (t.id !== "filter-block-drag-target") {
+        return;
       }
       t.classList.remove('active');
       const pos = t.attributes.getNamedItem('data-dragPosition')?.value;
@@ -571,20 +657,21 @@ export class FilterService {
         console.error("Block/Rule drop target missing required position attribute");
         return;
       }
-      if ((target as FilterBlockInfo).rules) {
+      if ((target as FilterRuleInfo).type !== undefined) {
+        const blockId = t.attributes.getNamedItem('data-block')?.value;
+        const ruleBlockId = t.attributes.getNamedItem('data-ruleBlock')?.value;
+        if (!blockId) {
+          console.error("Rule drop target missing required block attribute");
+          return;
+        }
+        this.SetRulePosition(target.id, parseInt(pos), blockId, ruleBlockId);
+      } else {
         const sectionId = t.attributes.getNamedItem('data-section')?.value;
         if (!sectionId) {
           console.error("Block drop target missing required section attribute");
           return;
         }
         this.SetBlockPosition(target.id, sectionId, parseInt(pos));
-      } else {
-        const blockId = t.attributes.getNamedItem('data-block')?.value;
-        if (!blockId) {
-          console.error("Rule drop target missing required block attribute");
-          return;
-        }
-        this.SetRulePosition(target.id, blockId, parseInt(pos));
       }
       this.dragTarget = null;
     }
@@ -650,24 +737,36 @@ export class FilterService {
     trgSection.blocks = trgSection.blocks.sort(FilterService.SortFn);
   }
 
-  private SetRulePosition(ruleId: string, blockId: string, position: number) {
+  private SetRulePosition(ruleId: string, position: number, blockId: string, ruleBlockId?: string, ) {
     const sections = this.filter()?.sections;
     if (!sections) {
       return;
     }
-    let trgBlock: FilterBlockInfo|null = null;
-    let trgRule: FilterRuleInfo|null = null;
+    let trgBlock: FilterBlockInfo|FilterRuleBlockInfo|null = null;
+    let trgRule: FilterRuleInfo|FilterRuleBlockInfo|null = null;
     for (let i = 0; i < sections.length; i++) {
       const s = sections[i];
       for (let j = 0; j < s.blocks.length; j++) {
         const b = s.blocks[j];
         if (b.id === blockId) {
-          trgBlock = b;
-          for (let k = 0; k < b.rules.length; k++) {
-            const r = b.rules[k];
-            if (r.id === ruleId) {
-              trgRule = r;
-              break;
+          if (ruleBlockId === undefined) {
+            trgBlock = b;
+          } else {
+            for (let k = 0; k < b.rules.length; k++) {
+              const r = b.rules[k];
+              if (r.type === FilterRuleItemType.RULE_BLOCK && r.id === ruleBlockId) {
+                trgBlock = r as FilterRuleBlockInfo;
+                break;
+              }
+            }  
+          }
+          if (trgBlock) {
+            for (let k = 0; k < trgBlock.rules.length; k++) {
+              const r = trgBlock.rules[k];
+              if (r.id === ruleId) {
+                trgRule = r;
+                break;
+              }
             }
           }
           break;
@@ -697,7 +796,7 @@ export class FilterService {
     trgBlock.rules = trgBlock.rules.sort(FilterService.SortFn);
   }
 
-  private static SortFn(a: FilterBlockInfo|FilterRuleInfo, b:FilterBlockInfo|FilterRuleInfo) {
+  private static SortFn(a: FilterBlockInfo|FilterRuleInfo|FilterRuleBlockInfo, b:FilterBlockInfo|FilterRuleInfo|FilterRuleBlockInfo) {
     if (a.position < b.position) {
       return -1;
     }

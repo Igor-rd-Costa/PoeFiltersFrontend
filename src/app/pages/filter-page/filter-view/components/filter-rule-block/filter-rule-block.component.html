@@ -1,0 +1,62 @@
+<div #wrapper>
+  <div id="filter-rule-heading" class="h-[3rem] bg-main w-full rounded-md flex items-center 
+  pl-4 hover:bg-mainBright cursor-pointer" (dragstart)="OnDragStart()" (click)="ToggleExpand()" draggable="true">
+    <h3 id="filter-rule-heading-content" class="grid grid-cols-[auto_auto_auto_auto_1fr] items-center gap-x-2 text-[1.1rem] text-dark w-full pr-4" draggable="false">
+      <span class="material-symbols-outlined text-[2.5rem]">
+        lists
+      </span>
+      <span draggable="false">{{ruleBlock().name}}</span>
+      <span class="material-symbols-outlined text-[1.8rem] hover:text-[#333F]" (click)="EditRuleBlockInfo($event)" draggable="false">
+        edit
+      </span>
+      <span class="material-symbols-outlined text-[1.8rem] hover:text-[#333F]" (click)="Delete()" draggable="false">
+        delete
+      </span>
+      <span [style]="{rotate: isExpanded() ? '90deg' : '0deg'}" id="filter-rule-expand-icon" class="material-symbols-outlined justify-self-end" draggable="false">
+        chevron_right
+      </span>
+    </h3>
+  </div>
+  <div [style]="{height: isExpanded() ? 'fit-content' : '0px'}" id="filter-rule-content" class="overflow-hidden text-dark">
+    <div class="pl-4 pr-4">
+      @if (!isInEditMode()) {
+        <div id="filter-rule-drag-target" [attr.data-block]="blockId" [attr.data-ruleBlock]="ruleBlock().id" class="w-full grid justify-items-center pt-3 pb-3 h-fit" 
+        [attr.data-dragPosition]="0" (dragover)="OnDragOver($event)" (dragleave)="OnMouseLeave($event)">
+          <div class="w-[90%] h-[1px] pointer-events-none"></div>
+        </div>
+        @for (rule of ruleBlock().rules; track $index) {
+          <div class="w-full">
+            <app-filter-rule [itemCategories]="itemCategories" [rule]="rule"/>
+            <div id="filter-rule-drag-target" [attr.data-block]="blockId" [attr.data-ruleBlock]="ruleBlock().id" class="w-full grid justify-items-center pt-3 pb-3 h-fit" 
+            [attr.data-dragPosition]="$index + 1" (dragover)="OnDragOver($event)" (dragleave)="OnMouseLeave($event)">
+              <div class="w-[90%] h-[1px] pointer-events-none"></div>
+            </div>
+          </div>
+        }
+        <div id="filter-rule-heading" class="h-[3rem] mb-[calc(1.5rem+1px)] text-[1.5rem] text-dark bg-main w-full rounded-md flex items-center justify-center 
+        pl-4 hover:bg-mainBright cursor-pointer" (click)="CreateRule()">
+          Create Rule
+        </div>
+      } @else {
+        <div class="p-2 text-main border border-t-0 m-[0.3rem] gap-2 mt-0 bg-[#222F] border-main rounded-b-md shadow-card">
+          <h3 class="text-[1.2rem]">Rule Settings</h3>
+          <form id="filter-rule-wrapper-edit-form" class="text-[1rem] grid grid-cols-[auto_1fr] grid-rows-[1fr_auto] gap-4" (submit)="SaveRuleBlockInfo($event)">
+            <div class="grid gap-2">
+              <div class="">
+                <label class="text-[0.9rem] font-mono">Name</label>
+                <br>
+                <input id="filter-rule-wrapper-edit-form-name-input" class="pl-2 rounded-md outline-none" type="text" [value]="ruleBlock().name">
+              </div>
+            </div>
+            <div class="flex flex-col">
+            </div>
+            <div class="flex row-start-2 col-start-1 col-end-3 gap-x-2 items-end justify-end">
+              <button class="bg-dark hover:bg-darkBright shadow-card text-main p-1 pl-2 pr-2 rounded-md">Save</button>
+              <button type="button" class="bg-dark hover:bg-darkBright shadow-card text-main p-1 pl-2 pr-2 rounded-md" (click)="CancelEdit($event)">Cancel</button>
+            </div>
+          </form>
+        </div>
+      }
+    </div>
+  </div>
+</div>
