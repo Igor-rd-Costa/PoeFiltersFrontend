@@ -21,6 +21,12 @@ export class FilterRuleComponent implements AfterViewInit {
   rule = model.required<FilterRuleInfo>();
   isExpanded = signal<boolean>(false);
   isInEditMode = signal<boolean>(false);
+  previewStyle = signal<{
+    fontSize: string,
+    color: string,
+    borderColor: string,
+    backgroundColor: string,
+  }>({fontSize: '16px', color: 'rgb(0, 0, 0)', borderColor: 'rgb(0, 0, 0)', backgroundColor: 'rgb(0, 0, 0)'});
   items: Item[] = [];
   categories: ItemCategory[] = [];
 
@@ -39,33 +45,22 @@ export class FilterRuleComponent implements AfterViewInit {
     if (this.rule().items.length > 0) {
       this.items = await this.itemService.GetItemsById(this.rule().items);
     }
+    this.UpdatePreviewStyle();
   }
 
   OnTextColorInputChange(value: ColorRGBA) {
-    const c = {...this.rule().style.textColor};
-    c.r = value.r;
-    c.g = value.g;
-    c.b = value.b;
-    c.a = value.a;
-    this.rule().style.textColor = c;
+    this.rule().style.textColor = {...value, active: true};
+    this.UpdatePreviewStyle();
   }
 
   OnBorderColorInputChange(value: ColorRGBA) {
-    const c = {...this.rule().style.borderColor};
-    c.r = value.r;
-    c.g = value.g;
-    c.b = value.b;
-    c.a = value.a;
-    this.rule().style.borderColor = c;
+    this.rule().style.borderColor = {...value, active: true};
+    this.UpdatePreviewStyle();
   }
 
   OnBackgroundColorInputChange(value: ColorRGBA) {
-    const c = {...this.rule().style.backgroundColor};
-    c.r = value.r;
-    c.g = value.g;
-    c.b = value.b;
-    c.a = value.a;
-    this.rule().style.backgroundColor = c;
+    this.rule().style.backgroundColor = {...value, active: true};
+    this.UpdatePreviewStyle();
   }
 
   async ToggleExpand() {
@@ -157,7 +152,6 @@ export class FilterRuleComponent implements AfterViewInit {
     if (this.rule().state === "Disabled") {
       this.rule().state = "Show";
     }
-    console.log("D", this.rule().items);
   }
 
   RemoveItem(item: Item) {
@@ -188,18 +182,37 @@ export class FilterRuleComponent implements AfterViewInit {
 
   OnFontSizeChange(fontSize: number) {
     this.rule().style.fontSize = fontSize;
+    this.UpdatePreviewStyle();
   }
 
   protected ResetStyles() {
     this.rule().style = this.filterService.GetDefaultRuleStyle();
+    this.UpdatePreviewStyle();
   }
 
   protected Delete() {
     this.filterService.DeleteRule(this.rule().id);
+    this.UpdatePreviewStyle();
   }
 
   protected OnDragStart() {
     this.filterService.DragDrop(this.rule());
+  }
+
+  private UpdatePreviewStyle() {
+    const tx = this.rule().style.textColor;
+    const bc = this.rule().style.borderColor;
+    const bgC = this.rule().style.backgroundColor;
+    const basePx = 16.32;
+    const fs = basePx * (this.rule().style.fontSize / 32);
+
+    let stl = {
+      fontSize: fs + 'px',
+      color: tx.active ? `rgba(${tx.r}, ${tx.g}, ${tx.b}, ${tx.a})` : 'rgba(220, 220, 220, 1)',
+      borderColor: bc.active ? `rgba(${bc.r}, ${bc.g}, ${bc.b}, ${bc.a})` : 'transparent',
+      backgroundColor: bgC.active ? `rgba(${bgC.r}, ${bgC.g}, ${bgC.b}, ${bgC.a})` : 'rgba(0,0,0, 0.7)',
+    };
+    this.previewStyle.set(stl);
   }
 
   protected GetPreviewStyle() {

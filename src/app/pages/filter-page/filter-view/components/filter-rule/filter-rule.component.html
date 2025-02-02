@@ -47,7 +47,7 @@
       <div class="grid grid-rows-[auto_1fr] gap-y-2 p-2">
         <div class="relative border border-main rounded-md w-full h-[120px] bg-poe2-item-preview">
           @if (rule().state !== "Disabled") {
-            <div [style]="GetPreviewStyle()" class="absolute top-[33px] left-[54px] border 
+            <div [style]="previewStyle()" class="absolute top-[33px] left-[54px] border 
             flex items-center justify-center font-fontin tracking-[0.06em] p-1">{{items.length > 0 ? items[0].name : ""}}</div>
           }
         </div>

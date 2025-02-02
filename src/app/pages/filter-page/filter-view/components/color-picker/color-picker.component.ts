@@ -1,6 +1,7 @@
 import { Component, computed, effect, ElementRef, Input, ModelSignal, signal, ViewChild } from '@angular/core';
 import { Color, ColorHSV, ColorHSVA, ColorRGBA } from '../../../../../services/FilterService';
 import { Observable, Subscriber } from 'rxjs';
+import { RGBToHSV } from '../../../../../utils/helpers';
 
 @Component({
   selector: 'app-color-picker-menu',
@@ -37,7 +38,7 @@ export class ColorPickerMenuComponent {
   private initialColor: Color|null = null;
   private isSelecting = signal<boolean>(false);
   private subscriber: Subscriber<ColorRGBA>|null = null;
-  private value = computed(() => {
+  protected value = computed(() => {
     const base = this.gradBaseHSV();
     const h = base.h;
     const s = base.s / 100;
@@ -82,12 +83,63 @@ export class ColorPickerMenuComponent {
     return `linear-gradient(to right, transparent, rgb(${c.r}, ${c.g}, ${c.b}))`
   }
 
+  GetAlpha() {
+    return Math.max(Math.min(255, Math.round(this.value().a * 255)), 0);
+  }
+
+  OnRGBAInputKeyDown(event: KeyboardEvent) {
+    if (!event.target) {
+      return;
+    }
+    const t = event.target as HTMLInputElement;
+    const val = t.value;
+    const isValidKey = event.key === 'Delete' || event.key === 'Backspace' || event.key === 'ArrowLeft' || event.key === 'ArrowRight'
+    || event.key === 'ArrowUp' || event.key === 'ArrowDown'
+    || (event.key >= '0' && event.key <= '9' && val.length < 3);
+    
+    if (!isValidKey) {
+      event.preventDefault();
+      return;
+    }
+  }
+  
+  OnRGBInputEvent(event: Event) {
+    const rInput = this.menu.nativeElement.querySelector('#color-picker-input-r') as HTMLInputElement | null;
+    const gInput = this.menu.nativeElement.querySelector('#color-picker-input-g') as HTMLInputElement | null;
+    const bInput = this.menu.nativeElement.querySelector('#color-picker-input-b') as HTMLInputElement | null;
+    if (!rInput || !gInput || !bInput) {
+      return;
+    }
+    const r = parseInt(rInput.value.length === 0 ? '0' : rInput.value);
+    const g = parseInt(gInput.value.length === 0 ? '0' : gInput.value);
+    const b = parseInt(bInput.value.length === 0 ? '0' : bInput.value);
+    
+    const hsv = RGBToHSV({r, g, b});
+    const base = {...this.gradBaseHSV()};
+    base.h = hsv.h;
+    base.s = hsv.s;
+    base.v = hsv.v;
+    this.gradBaseHSV.set(base);
+    this.SetGradientSelectorPos();
+    this.SetGradientSliderPos();
+  }
+
+  OnAlphaInputEvent(event: Event) {
+    const t = (event.target as HTMLInputElement);
+    const a = parseInt(t.value.length === 0 ? '0' : t.value);
+    const base = {...this.gradBaseHSV()};
+    base.a = Math.max(0, Math.min(255, a)) / 255;
+    this.gradBaseHSV.set(base);
+    this.SetOpacitySliderPos();
+  }
+
   Open(target: HTMLElement, color: ModelSignal<Color>) {
     const rect = target.getBoundingClientRect();
     let top = rect.top + 48;
     let left = rect.left;
     this.isColorPickerOpen.set(true);
     this.initialColor = color();
+    this.gradBaseHSV.set({...RGBToHSV({r: color().r, g: color().g, b: color().b}), a: this.gradBaseHSV().a });
     this.SetOpacitySliderPos();
     this.SetGradientSliderPos();
     this.SetGradientSelectorPos();
@@ -166,15 +218,8 @@ export class ColorPickerMenuComponent {
   }
 
   ToRGBA() {
-    if (this.value === null) {
-      return `rgba(0, 0, 0, 0)`;
-    }
-    return `rgba(${this.value().r}, ${this.value().g}, ${this.value().b}, ${this.value().a})`;
-  }
-
-  ToHSLA() {
     const c = this.value();
-    return `rgba(${c.r}, ${c.g}, ${c.b}, ${c.a})`
+    return `rgba(${c.r}, ${c.g}, ${c.b}, ${c.a})`;
   }
 
   SetOpacitySliderPos() {
@@ -194,27 +239,26 @@ export class ColorPickerMenuComponent {
     if (this.value === null) {
       return;
     }
-    const col = {...this.value()};
-    let min = col.r;
-    if (col.g < min) {
-      min = col.g;
-    }
-    if (col.b < min) {
-      min = col.b;
-    }
-    if (col.r === min) {
-      col.r = 0;
-    }
-    if (col.g === min) {
-      col.g = 0;
-    }
-    if (col.b === min) {
-      col.b = 0;
-    }
+    const h = this.gradBaseHSV().h;
+    const height = this.gradientSlider.nativeElement.getBoundingClientRect().height;
+    const top = (h / 360) * height;
+    this.gradientSliderPos = top;
   }
 
   SetGradientSelectorPos() {
-
+    setTimeout(() => {
+      const gradient = this.menu.nativeElement.querySelector("#color-picker-gradient");
+      if (!gradient) {
+        return;
+      }
+      const rect = gradient.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+      const c = this.gradBaseHSV();
+      const x = ((c.s / 100)) * width;
+      const y = (1 - (c.v / 100)) * height;
+      this.selector = {x, y};
+    });
   }
 
   OnOpacitySliderMouseDown(event: MouseEvent) {
