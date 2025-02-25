@@ -33,7 +33,7 @@ export class FilterViewComponent implements AfterViewInit {
           this.filterService.CreateSection();
         }
       }
-    })
+    }, {allowSignalWrites: true})
   }
 
   ngAfterViewInit(): void {

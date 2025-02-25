@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, signal, ViewChild } from '@angular/core';
 import { ItemService, Item, ItemCategory } from '../../../../../../services/ItemService';
+import { ItemCategoryService } from '../../../../../../services/ItemCategoryService';
 
 const itemsMap = new Map<string, Item[]>();
 const itemCategories: ItemCategory[] = [];
@@ -19,11 +20,11 @@ export class BaseTypeInputComponent implements AfterViewInit {
   protected categories: ItemCategory[] = [];
   protected suggestedBaseTypes: Item[] = [];
 
-  constructor(private itemService: ItemService) {}
+  constructor(private itemService: ItemService, private itemCategoryService: ItemCategoryService) {}
 
   async ngAfterViewInit() {
     if (itemCategories.length === 0) {
-      itemCategories.push(...await this.itemService.GetItemCategories(false));
+      itemCategories.push(...await this.itemCategoryService.GetBaseItemCategories());
       for (let i = 0; i < itemCategories.length; i++) {
         itemsMap.set(itemCategories[i].id, []);
       }

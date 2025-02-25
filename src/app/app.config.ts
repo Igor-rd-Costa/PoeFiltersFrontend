@@ -7,8 +7,9 @@ import { FilterService } from './services/FilterService';
 import { ViewService } from './services/ViewService';
 import { ItemService } from './services/ItemService';
 import { AuthService } from './services/AuthService';
+import { ItemCategoryService } from './services/ItemCategoryService';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideHttpClient(), 
-    provideRouter(routes), FilterService, ViewService, ItemService, AuthService]
+    provideRouter(routes), FilterService, ViewService, ItemService, ItemCategoryService, AuthService]
 };

@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable, signal } from "@angular/core";
 import { AppComponent } from "../app.component";
 import { v4 } from 'uuid'
+import { AuthService } from "./AuthService";
 
 
 type FilterGame = "PoE1" | "PoE2"
@@ -42,7 +43,7 @@ export type ColorHSV = {
 export type FilterData = {
   id: string,
   name: string,
-  modified_at: Date,
+  modifiedAt: Date,
   game: FilterGame
 }
 
@@ -168,8 +169,8 @@ export type Filter = {
   id: string,
   user: string|null,
   name: string,
-  created_at: Date,
-  modified_at: Date,
+  createdAt: Date,
+  modifiedAt: Date,
   game: FilterGame
   sections: FilterSection[]
 }
@@ -215,8 +216,8 @@ export type FilterInfo = {
   id: string,
   user: string|null,
   name: string,
-  created_at: Date,
-  modified_at: Date,
+  createdAt: Date,
+  modifiedAt: Date,
   game: FilterGame,
   sections: FilterSectionInfo[],
 }
@@ -289,14 +290,14 @@ export class FilterService {
       this.http.get<FilterInfo[]>(this.backend, {withCredentials: true}).subscribe({
         next: (filters => {
           for (let i = 0; i < filters.length; i++) {
-            console.log(filters[i].modified_at);
-            filters[i].modified_at = new Date(filters[i].modified_at)
+            filters[i].createdAt = new Date(filters[i].createdAt);
+            filters[i].modifiedAt = new Date(filters[i].modifiedAt);
           }
           resolve(filters);
         }),
         error: err => {
           console.error(err);
-          resolve(err);
+          resolve([]);
         }
       })
     });
@@ -580,8 +581,8 @@ export class FilterService {
       user: filter.user,
       name: filter.name,
       game: filter.game,
-      created_at: filter.created_at,
-      modified_at: filter.modified_at,
+      createdAt: filter.createdAt,
+      modifiedAt: filter.modifiedAt,
       sections: []
     }
     for (let i = 0; i < filter.sections.length; i++) {

@@ -1,61 +1,41 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, signal } from "@angular/core";
 import { AppComponent } from "../app.component";
 
 export type Item = {
   id: string,
-  name: string
+  name: string,
+  rarity: string
+  baseCategory: string,
+  categories: string[],
 }
 
 export type ItemCategory = {
   id: string,
-  name: string,
-  ignoreItems: boolean
+  name: string
 }
 
 @Injectable()
 export class ItemService {
   private backend = AppComponent.Backend() + "poe2/item/";
+  private items = signal<Item[]>([]);
 
   constructor(private http: HttpClient) {}
 
-  GetItemCategories(includeIgnored: boolean = true) {
-    return new Promise<ItemCategory[]>(resolve => {
-      this.http.get<ItemCategory[]>(this.backend+"category?includeIgnored="+includeIgnored, {withCredentials: true}).subscribe({
-        next: categories => {
-          resolve(categories);
+  Items() {
+    return this.items();
+  }
+
+  GetItems() {
+    return new Promise<Item[]>(resolve => {
+      this.http.get<Item[]>(this.backend, {withCredentials: true}).subscribe({
+        next: items => {
+          this.items.set(items);
+          resolve(items);
         },
         error: err => {
           console.error(err);
           resolve([]);
-        }
-      })
-    });
-  }
-
-  UpdateItemCategories() {
-    return new Promise<ItemCategory[]>(resolve => {
-      this.http.patch<ItemCategory[]>(this.backend+"category/update", {withCredentials: true}).subscribe({
-        next: categories => {
-          resolve(categories);
-        },
-        error: err => {
-          console.error(err);
-          resolve([]);
-        }
-      })
-    });
-  }
-
-  UpdateItemCategory(category: ItemCategory) {
-    return new Promise<boolean>(resolve => {
-      this.http.patch(this.backend+"category", category, {withCredentials: true}).subscribe({
-        next: _ => {
-          resolve(true);
-        },
-        error: err => {
-          console.error(err);
-          resolve(err);
         }
       })
     });
@@ -75,9 +55,9 @@ export class ItemService {
     });
   }
 
-  GetItemsById(items: string[]) {
+  GetItemsById(itemIds: string[]) {
     return new Promise<Item[]>(resolve => {
-      this.http.get<Item[]>(this.backend+`?ids=${items}`,{withCredentials: true}).subscribe({
+      this.http.get<Item[]>(this.backend+`?ids=${itemIds}`,{withCredentials: true}).subscribe({
         next: items => {
           resolve(items);
         },
@@ -103,4 +83,24 @@ export class ItemService {
     })
   }
 
+  AddCategoryToItem(itemId: string, categoryId: string) {
+    return new Promise<boolean>(resolve => {
+      this.http.patch(this.backend+'categories', {id: itemId, categoryId}, {withCredentials: true}).subscribe({
+        next: _ => {
+          const items = this.items();
+          for (let i = 0; i < items.length; i++) {
+            if (items[i].id === itemId) {
+              items[i].categories.push(categoryId);
+              break;
+            }
+          }
+          resolve(true);
+        },
+        error: err => {
+          console.error(err);
+          resolve(false);
+        }
+      })
+    })
+  }
 }

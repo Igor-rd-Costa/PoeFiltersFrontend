@@ -1,0 +1,70 @@
+<div [style]="{display: isVisible() ? 'grid' : 'none'}" class="absolute bg-darkBright left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 text-[#AAAF]
+border border-main rounded-md w-[35rem] h-[45rem] shadow-card grid-rows-[auto_1fr] grid-cols-[1fr_2rem]" #menu>
+  <div class="pl-3 pt-1 grid items-center text-[0.9rem]">
+    <p class="text-[1.1rem] text-main">{{info()?.name}}</p>
+    <p>Type: {{infoType.charAt(0).toUpperCase() + infoType.substring(1)}}</p>
+  </div>
+  <button class="w-[2rem] h-[2rem] hover:text-white flex items-center justify-center" (click)="Hide()">
+    X
+  </button>
+  @if (this.infoType === 'category') {
+    <div class="col-start-1 col-end-3 w-full h-full p-2 grid grid-rows-[auto_1fr] overflow-hidden">
+      <p class="text-[0.8rem]">Items:</p>
+      <div class="border border-main rounded-md w-full h-full grid grid-cols-1 grid-rows-1 overflow-scroll">
+        <ul class="flex flex-wrap gap-2 p-2 h-fit">
+          <li class="h-[2rem] w-fit relative">
+            @if (!isAddItemToCategoryFormVisible()) {
+              <button class="h-full rounded-md bg-[#444F] shadow-card hover:bg-[#4A4A4AFF] w-[4rem] pl-2 pr-2 flex items-center justify-center" 
+            (click)="ShowAddItemToCategoryForm()">
+            <span class="material-symbols-outlined w-[1.1rem] h-[1.1rem] text-[1.1rem]">
+              add
+            </span>
+          </button>
+        } @else {
+          <form class="h-full grid grid-cols-[1fr_auto_auto] gap-x-1">
+            <input class="h-full w-[12rem] pl-2 rounded-md bg-[#444F] shadow-card outline-none" type="text" (input)="OnInput($event)">
+            <button type="button" class="w-[2rem] h-[2rem] rounded-md shadow-card flex justify-center items-center bg-[#444F] hover:bg-[#4A4A4AFF]" (click)="CancelAddItem()">
+              <span class="material-symbols-outlined">
+                close
+              </span>
+            </button>
+          </form>
+          @if (showSuggestionBox() && suggestions().length > 0) {
+            <div class="absolute top-[2.1rem] w-fit p-1 rounded-md left-0 bg-[#444F] shadow-card">
+              <ul class="max-h-[10rem] min-h-[2rem] h-fit overflow-scroll">
+                @for (suggestion of suggestions(); track suggestion.id) {
+                  <li class="min-h-[2rem] h-fit p-1 flex items-center hover:bg-[#555F] hover:text-white cursor-pointer rounded-md" 
+                  (click)="AddItemToCategory(suggestion.id)">{{suggestion.name}}</li>
+                }
+              </ul>
+            </div>
+          }
+        }
+      </li>
+      @for (item of GetItemsFromCategory(); track item.id) {
+        <li class="rounded-md bg-[#444F] h-[2rem] w-fit flex gap-x-2 items-center pl-2 pr-2 
+        shadow-card hover:text-white cursor-pointer" (click)="ShowItemInfo(item)">
+        {{item.name}}
+      </li>
+      }
+    </ul>
+  </div>
+</div>
+  } @else {
+    <div class="col-start-1 p-3 pt-0 col-end-3 w-full h-full grid grid-rows-[auto_auto_auto_1fr] text-[0.9rem] overflow-hidden">
+      <p>Rarity: {{GetRarity()}}</p>
+      <p>Base Category: {{GetBaseCategory()}}</p>
+      <p>Categories:</p>
+      <div class="border border-main rounded-md w-full h-full overflow-scroll">
+        <ul class="flex flex-wrap gap-2 p-2">
+          @for (category of itemCategories(); track category.id) {
+            <li class="rounded-md bg-[#444F] h-[2rem] flex gap-x-2 items-center pl-2 pr-2 
+            shadow-card hover:text-white cursor-pointer">
+              {{category.name}}
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+  }
+</div>

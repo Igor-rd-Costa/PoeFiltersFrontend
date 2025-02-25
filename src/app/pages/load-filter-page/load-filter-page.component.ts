@@ -21,17 +21,18 @@ export class LoadFilterPageComponent implements AfterViewInit {
 
   constructor(private filterService: FilterService, private viewService: ViewService, protected authService: AuthService) {
     effect(() => {
-      if (this.authService.IsLogged()) {
+      const logged = this.authService.IsLogged();
+      if (logged) {
         this.filterService.GetFiltersInfo().then(filters => {
           this.filters = filters;
-          filters.forEach(f => console.log(f.modified_at.toString()))
         });
-        this.authService.GetUserInfo();
       }
     });
   }
   
-  async ngAfterViewInit() {}
+  async ngAfterViewInit() {
+    
+  }
 
   GetTimeDif(date: Date) {
     const now = new Date(Date.now());

@@ -6,6 +6,7 @@ import { LoadFilterPageComponent } from '../load-filter-page/load-filter-page.co
 import { FilterViewComponent } from './filter-view/filter-view.component';
 import { FilterExportViewComponent } from "./filter-export-view/filter-export-view.component";
 import { UserAdminViewComponent } from "./user-admin-view/user-admin-view.component";
+import { AuthService } from '../../services/AuthService';
 
 @Component({
   selector: 'app-filter-page',
@@ -16,11 +17,17 @@ import { UserAdminViewComponent } from "./user-admin-view/user-admin-view.compon
 export class FilterPageComponent implements AfterViewInit {
   AppView = AppView;
 
-  constructor(protected filterService: FilterService, protected viewService: ViewService) {}
+  constructor(protected authService: AuthService, protected filterService: FilterService, protected viewService: ViewService) {}
 
   ngAfterViewInit(): void {
     if (this.filterService.Filter() === null) {
       this.viewService.SetView(AppView.FILTER_LOAD);
     }
+    setTimeout(() => {
+      const user = this.authService.User();
+      if (user) {
+        this.viewService.SetView(AppView.USER_ADMIN);
+      }
+    }, 500);
   }
 }
