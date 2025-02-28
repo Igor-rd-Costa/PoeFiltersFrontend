@@ -66,17 +66,30 @@
               <input id="filter-block-wrapper-edit-form-img-input" class="pl-2 rounded-md outline-none" type="text" [value]="block().imgSrc">
             </div>
           </div>
-          <div class="flex flex-col">
-            <label class="font-mono text-[0.9rem]">Allowed BaseType Categories</label>
-            <ul class="w-full h-[8rem] border overflow-scroll p-2 gap-2 border-main rounded-md shadow-inner-card flex flex-wrap">
-              @for (category of baseTypeCategories; track $index) {
-                <li [style]="IsCategoryIncluded(category) ? {backgroundColor: '#555F', color: '#DDDF'} : {}" class="bg-[#444F] w-fit h-[1.8rem] pl-2 pr-2 text-[#AAAF] rounded shadow-card grid justify-items-center 
-                items-center cursor-pointer hover:bg-[#4A4A4AFF]" (click)="ToggleIncludedCategories(category)">
-                {{category.name}}
-              </li>
-            }
-          </ul>
-        </div>
+          <div class="flex flex-col gap-y-4">
+            <div>
+              <label class="font-mono text-[0.9rem]">Allowed Base Categories</label>
+              <ul class="w-full h-[8rem] border overflow-scroll p-2 gap-2 border-main rounded-md shadow-inner-card flex flex-wrap">
+                @for (category of baseCategories; track $index) {
+                  <li [style]="IsCategoryIncluded(category) ? {backgroundColor: '#555F', color: '#DDDF'} : {}" class="bg-[#444F] w-fit h-[1.8rem] pl-2 pr-2 text-[#AAAF] rounded shadow-card grid justify-items-center 
+                  items-center cursor-pointer hover:bg-[#4A4A4AFF]" (click)="ToggleIncludedCategories(category)">
+                    {{category.name}}
+                  </li>
+                }
+              </ul>
+            </div>
+            <div>
+              <label class="font-mono text-[0.9rem]">Allowed Custom Categories</label>
+              <ul class="w-full h-[8rem] border overflow-scroll p-2 gap-2 border-main rounded-md shadow-inner-card flex flex-wrap">
+                @for (category of customCategories; track $index) {
+                  <li [style]="IsCategoryIncluded(category) ? {backgroundColor: '#555F', color: '#DDDF'} : {}" class="bg-[#444F] w-fit h-[1.8rem] pl-2 pr-2 text-[#AAAF] rounded shadow-card grid justify-items-center 
+                  items-center cursor-pointer hover:bg-[#4A4A4AFF]" (click)="ToggleIncludedCategories(category)">
+                    {{category.name}}
+                  </li>
+                }
+              </ul>
+            </div>
+          </div>
         <div class="flex row-start-2 col-start-1 col-end-3 gap-x-2 items-end justify-end">
           <button class="bg-dark hover:bg-darkBright shadow-card text-main p-1 pl-2 pr-2 rounded-md">Save</button>
           <button type="button" class="bg-dark hover:bg-darkBright shadow-card text-main p-1 pl-2 pr-2 rounded-md" (click)="CancelEdit($event)">Cancel</button>

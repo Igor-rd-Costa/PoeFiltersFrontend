@@ -47,9 +47,10 @@ export class UserAdminViewComponent implements AfterViewInit {
   }
 
   async GetData() {
-    this.baseCategories.set((await this.itemCategoryService.GetBaseItemCategories()).sort(this.CategoriesSortFn));
-    this.categories.set((await this.itemCategoryService.GetItemCategories()).sort(this.CategoriesSortFn));
-    this.items.set(await this.itemService.GetItems());
+
+    this.baseCategories.set(this.itemCategoryService.BaseCategories().sort(this.CategoriesSortFn));
+    this.categories.set(this.itemCategoryService.ItemCategories().sort(this.CategoriesSortFn));
+    this.items.set(this.itemService.Items());
   }
 
   async UpdateCategories() {

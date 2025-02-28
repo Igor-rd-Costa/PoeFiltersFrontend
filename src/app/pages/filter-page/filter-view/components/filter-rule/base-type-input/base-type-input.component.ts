@@ -24,7 +24,8 @@ export class BaseTypeInputComponent implements AfterViewInit {
 
   async ngAfterViewInit() {
     if (itemCategories.length === 0) {
-      itemCategories.push(...await this.itemCategoryService.GetBaseItemCategories());
+      itemCategories.push(...this.itemCategoryService.BaseCategories());
+      itemCategories.push(...this.itemCategoryService.ItemCategories());
       for (let i = 0; i < itemCategories.length; i++) {
         itemsMap.set(itemCategories[i].id, []);
       }
@@ -67,8 +68,8 @@ export class BaseTypeInputComponent implements AfterViewInit {
       case "insertText": {
         if (val === e.data?.toLowerCase()) {
           for (let i = 0; i < this.categories.length; i++) {
-            this.suggestedBaseTypes.push(...await this.itemService.GetItemsFromCategory(this.categories[i].id)); 
-            console.log("C", this.suggestedBaseTypes);
+            const suggestedItems = this.itemService.GetItemsFromCategory(this.categories[i].id);
+            this.suggestedBaseTypes.push(...suggestedItems); 
           }
           break;
         }

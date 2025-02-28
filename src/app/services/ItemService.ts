@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, signal } from "@angular/core";
 import { AppComponent } from "../app.component";
+import { ItemCategoryService } from "./ItemCategoryService";
 
 export type Item = {
   id: string,
@@ -20,53 +21,54 @@ export class ItemService {
   private backend = AppComponent.Backend() + "poe2/item/";
   private items = signal<Item[]>([]);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.GetItems();
+  }
 
   Items() {
     return this.items();
   }
 
-  GetItems() {
-    return new Promise<Item[]>(resolve => {
+  private GetItems() {
+    return new Promise<void>(resolve => {
       this.http.get<Item[]>(this.backend, {withCredentials: true}).subscribe({
         next: items => {
           this.items.set(items);
-          resolve(items);
+          resolve();
         },
         error: err => {
           console.error(err);
-          resolve([]);
+          resolve();
         }
       })
     });
   }
 
-  GetItemsFromCategory(categoryId: string) {
-    return new Promise<Item[]>(resolve => {
-      this.http.get<Item[]>(this.backend+`?category=${categoryId}`, {withCredentials: true}).subscribe({
-        next: items => {
-          resolve(items);
-        },
-        error: err => {
-          console.error(err);
-          resolve([]);
-        }
-      })
-    });
+  GetItemsFromCategory(categoryId: string): Item[] {
+    const items = this.items();
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].baseCategory === categoryId) {
+        return items.filter(item => item.baseCategory === categoryId);
+      }
+      if (items[i].categories.includes(categoryId)) {
+        return items.filter(item => item.categories.includes(categoryId));
+      }
+    }
+    return [];
   }
 
-  GetItemsById(itemIds: string[]) {
-    return new Promise<Item[]>(resolve => {
-      this.http.get<Item[]>(this.backend+`?ids=${itemIds}`,{withCredentials: true}).subscribe({
-        next: items => {
-          resolve(items);
-        },
-        error: err => {
-          console.error(err);
-          resolve([]);
+  GetItemsById(itemIds: string[]): Item[] {
+    const items = this.items();
+    const returnItems: Item[] = [];
+    for (let i  = 0; i < itemIds.length; i++) {
+      for (let j = 0; j < items.length; j++) {
+        if (itemIds[i] === items[j].id) {
+          returnItems.push(items[j]);
+          break;
         }
-      })
-    });
+      }
+    }
+    return returnItems;
   }
 
   UpdateItems() {

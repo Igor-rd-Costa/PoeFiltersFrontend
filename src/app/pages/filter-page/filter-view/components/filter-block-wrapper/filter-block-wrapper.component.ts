@@ -31,7 +31,9 @@ export class FilterBlockWrapperComponent implements AfterViewInit {
   block = model.required<FilterBlockInfo>();
   protected isExpanded = signal<boolean>(false);
   protected isInEditMode = signal<boolean>(false);
-  baseTypeCategories: ItemCategory[] = [];
+  baseCategories: ItemCategory[] = [];
+  customCategories: ItemCategory[] = [];
+  
 
   constructor(private filterService: FilterService, private itemCategoryService: ItemCategoryService, protected authService: AuthService) {
     effect(() => {
@@ -222,10 +224,13 @@ export class FilterBlockWrapperComponent implements AfterViewInit {
         return;
       }
     }
+    console.log("Adding Category", category);
     this.block().allowedCategories.push(category.id);
   }
 
   async GetBaseTypeCategories() {
-    this.baseTypeCategories = await this.itemCategoryService.GetBaseItemCategories();1
+    this.baseCategories = this.itemCategoryService.BaseCategories();
+    this.customCategories = this.itemCategoryService.ItemCategories();
+    console.log(this.customCategories);
   }
 }

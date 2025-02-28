@@ -92,7 +92,13 @@ export class CategoryItemInfoPopUpComponent {
     if (this.infoType === 'category') {
       return "";
     }
-    return (info as Item).baseCategory;
+    const baseCategories = this.itemCategoryService.BaseCategories();
+    for (let i = 0; i < baseCategories.length; i++) {
+      if (baseCategories[i].id === (info as Item).baseCategory) {
+        return baseCategories[i].name;
+      }
+    }
+    return "";
   }
 
   private lastInput = 0;

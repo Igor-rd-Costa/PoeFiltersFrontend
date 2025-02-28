@@ -43,7 +43,7 @@ export class FilterRuleComponent implements AfterViewInit {
       this.rule().state = "Disabled";
     }
     if (this.rule().items.length > 0) {
-      this.items = await this.itemService.GetItemsById(this.rule().items);
+      this.items = this.itemService.GetItemsById(this.rule().items);
     }
     this.UpdatePreviewStyle();
   }
@@ -166,12 +166,6 @@ export class FilterRuleComponent implements AfterViewInit {
     }
   }
   
-  // async GetBaseTypeCategories() {
-  //   if (this.rule().allowedCategories && this.rule().allowedCategories!.length > 0) {
-  //     this.categories = await this.adminService.GetItemCategories();
-  //   }
-  // }
-
   protected GetStateButtomColor() {
     switch(this.rule().state) {
       case "Hide":

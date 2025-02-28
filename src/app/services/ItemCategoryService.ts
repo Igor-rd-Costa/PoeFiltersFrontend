@@ -9,39 +9,45 @@ export class ItemCategoryService {
   private readonly backend = AppComponent.Backend() + "poe2/item-category/";
   private baseCategories = signal<ItemCategory[]>([]);
   private categories = signal<ItemCategory[]>([]);
-  private items = signal<Item[]>([]);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.GetBaseItemCategories();
+    this.GetItemCategories();
+  }
 
   ItemCategories() {
     return this.categories();
   }
 
-  GetItemCategories() {
-    return new Promise<ItemCategory[]>(resolve => {
+  BaseCategories() {
+    return this.baseCategories();
+  }
+
+  private GetItemCategories() {
+    return new Promise<void>(resolve => {
       this.http.get<ItemCategory[]>(this.backend+"custom", {withCredentials: true}).subscribe({
         next: categories => {
           this.categories.set(categories);
-          resolve(categories);
+          resolve();
         },
         error: err => {
           console.error(err);
-          resolve([]);
+          resolve();
         }
       })
     });
   }
   
-  GetBaseItemCategories() {
-    return new Promise<ItemCategory[]>(resolve => {
+  private GetBaseItemCategories() {
+    return new Promise<void>(resolve => {
       this.http.get<ItemCategory[]>(this.backend+"base", {withCredentials: true}).subscribe({
         next: categories => {
           this.baseCategories.set(categories);
-          resolve(categories);
+          resolve();
         },
         error: err => {
           console.error(err);
-          resolve([]);
+          resolve();
         }
       })
     });
@@ -49,6 +55,13 @@ export class ItemCategoryService {
 
   GetBaseItemCategory(id: string) {
     return new Promise<ItemCategory|null>(resolve => {
+      const baseCategories = this.baseCategories();
+      for (let i = 0; i < baseCategories.length; i++) {
+        if (baseCategories[i].id === id) {
+          resolve(baseCategories[i]);
+          return;
+        }
+      }
       this.http.get<ItemCategory|null>(this.backend+`base?id=${id}`, {withCredentials: true}).subscribe({
         next: category => {
           resolve(category);
@@ -77,7 +90,6 @@ export class ItemCategoryService {
 
   AddItemCategory(categoryName: string) {
     return new Promise<string|null>(resolve => {
-      console.log("Request for", categoryName);
       this.http.post<string>(this.backend+"custom", {categoryName}, {withCredentials: true}).subscribe({
         next: id => {
           resolve(id);

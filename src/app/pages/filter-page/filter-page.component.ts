@@ -26,7 +26,7 @@ export class FilterPageComponent implements AfterViewInit {
     setTimeout(() => {
       const user = this.authService.User();
       if (user) {
-        this.viewService.SetView(AppView.USER_ADMIN);
+        //this.viewService.SetView(AppView.USER_ADMIN);
       }
     }, 500);
   }
