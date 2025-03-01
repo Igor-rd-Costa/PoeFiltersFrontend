@@ -180,7 +180,11 @@ export type Filter = {
   sections: FilterSection[]
 }
 
-export type FilterRuleInfo = {
+interface IPositionable {
+  position: number
+}
+
+export type FilterRuleInfo = IPositionable & {
   type: FilterRuleItemType,
   id: string,
   name: string,
@@ -188,21 +192,18 @@ export type FilterRuleInfo = {
   style: RuleStyle,
   imgSrc: string,
   items: string[],
-  position: number,
 }
 
-export type FilterRuleBlockInfo = {
+export type FilterRuleBlockInfo = IPositionable & {
   type: FilterRuleItemType,
   id: string,
   name: string,
   allowUserCreatedRules: boolean,
   rules: FilterRuleInfo[],
-  position: number,
 }
 
-export type FilterBlockInfo = {
+export type FilterBlockInfo = IPositionable & {
   id: string,
-  position: number,
   name: string,
   imgSrc: string,
   allowedCategories: string[],
@@ -210,11 +211,10 @@ export type FilterBlockInfo = {
   rules: (FilterRuleInfo|FilterRuleBlockInfo)[]
 }
 
-export type FilterSectionInfo = {
+export type FilterSectionInfo = IPositionable & {
   id: string,
   name: string,
   blocks: FilterBlockInfo[],
-  position: number
 }
 
 
@@ -351,7 +351,7 @@ export class FilterService {
         resolve();
         return;
       }
-      this.http.patch(this.backend, filter, {withCredentials: true}).subscribe({
+      this.http.patch(this.backend, this.FilterInfoToFilter(filter), {withCredentials: true}).subscribe({
         next: _ => {
           resolve();
         },
@@ -642,6 +642,82 @@ export class FilterService {
     return filterInfo;
   }
 
+  private FilterInfoToFilter(filterInfo: FilterInfo): Filter {
+    const filter: Filter = {
+      id: filterInfo.id,
+      user: filterInfo.user,
+      name: filterInfo.name,
+      createdAt: filterInfo.createdAt,
+      modifiedAt: filterInfo.modifiedAt,
+      game: filterInfo.game,
+      sections: []
+    };
+
+    const sections = filterInfo.sections.sort(FilterService.SortFn);
+    for (let i = 0; i < sections.length; i++) {
+      const s = sections[i];
+      const section: FilterSection = {
+        id: s.id,
+        name: s.name,
+        blocks: []
+      }
+      const blocks = s.blocks.sort(FilterService.SortFn);
+      for (let j = 0; j < blocks.length; j++) {
+        const b = blocks[j];
+        const block: FilterBlock = {
+          id: b.id,
+          name: b.name,
+          imgSrc: b.imgSrc,
+          rulesType: b.rulesType,
+          allowedCategories: b.allowedCategories,
+          rules: []
+        }
+        const rules = b.rules.sort(FilterService.SortFn);
+        for (let k = 0; k < rules.length; k++) {
+          const r = rules[k];
+          if (r.type === FilterRuleItemType.RULE_BLOCK) {
+            const ruleBlock: FilterRuleBlock = {
+              id: r.id,
+              name: r.name,
+              type: FilterRuleItemType.RULE_BLOCK,
+              allowUserCreatedRules: (r as FilterRuleBlockInfo).allowUserCreatedRules,
+              rules: []
+            };
+            const ruleBlockRules = (r as FilterRuleBlockInfo).rules.sort(FilterService.SortFn);
+            for (let l = 0; l < ruleBlockRules.length; l++) {
+              const ru = ruleBlockRules[l];
+              const rule: FilterRule = {
+                id: ru.id,
+                name: ru.name,
+                type: FilterRuleItemType.RULE,
+                imgSrc: ru.imgSrc,
+                state: ru.state,
+                style: ru.style,
+                items: ru.items,
+              }
+              ruleBlock.rules.push(rule);
+            }
+            block.rules.push(ruleBlock);
+          } else {
+            const rule: FilterRule = {
+              id: r.id,
+              name: r.name,
+              type: FilterRuleItemType.RULE,
+              imgSrc: (r as FilterRuleInfo).imgSrc,
+              state: (r as FilterRuleInfo).state,
+              style: (r as FilterRuleInfo).style,
+              items: (r as FilterRuleInfo).items,
+            }
+            block.rules.push(rule);
+          }
+        }
+        section.blocks.push(block);
+      }
+      filter.sections.push(section);
+    }
+    return filter;
+  }
+
   IsDragDropInProgress() {
     return this.dragTarget !== null;
   }
@@ -809,7 +885,7 @@ export class FilterService {
     trgBlock.rules = trgBlock.rules.sort(FilterService.SortFn);
   }
 
-  private static SortFn(a: FilterBlockInfo|FilterRuleInfo|FilterRuleBlockInfo, b:FilterBlockInfo|FilterRuleInfo|FilterRuleBlockInfo) {
+  private static SortFn(a: IPositionable, b: IPositionable) {
     if (a.position < b.position) {
       return -1;
     }
