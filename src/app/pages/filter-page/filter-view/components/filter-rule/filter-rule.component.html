@@ -72,27 +72,7 @@
       </div>
       } @else {
         <div class="p-2 col-start-1 col-end-3 text-main">
-          <h3 class="text-[1.2rem]">Rule Settings</h3>
-          <form id="filter-rule-wrapper-edit-form" class="text-[1rem] grid grid-cols-[auto_1fr] grid-rows-[1fr_auto] gap-4" (submit)="SaveRuleInfo($event)">
-            <div class="grid gap-2">
-              <div class="">
-                <label class="text-[0.9rem] font-mono">Name</label>
-                <br>
-                <input id="filter-rule-wrapper-edit-form-name-input" class="pl-2 rounded-md outline-none" type="text" [value]="rule().name">
-              </div>
-              <div class="">
-                <label class="text-[0.9rem] font-mono">Image Source</label>
-                <br>
-                <input id="filter-rule-wrapper-edit-form-img-input" class="pl-2 rounded-md outline-none" type="text" [value]="rule().imgSrc">
-              </div>
-            </div>
-            <div class="flex flex-col">
-            </div>
-            <div class="flex row-start-2 col-start-1 col-end-3 gap-x-2 items-end justify-end">
-              <button class="bg-dark hover:bg-darkBright shadow-card text-main p-1 pl-2 pr-2 rounded-md">Save</button>
-              <button type="button" class="bg-dark hover:bg-darkBright shadow-card text-main p-1 pl-2 pr-2 rounded-md" (click)="CancelEdit($event)">Cancel</button>
-            </div>
-          </form>
+          <app-rule-settings-form [rule]="rule()" (close)="OnSettingsClose()"/>
         </div>
       }
     </div>

@@ -30,7 +30,6 @@ export class BlockSettingsFormComponent implements AfterViewInit {
     c.imgUrl.setValue(this.block().imgSrc);
     c.rulesType.setValue(this.block().rulesType);
     c.allowedCategories.setValue([...this.block().allowedCategories]);
-    console.log("Set " + c.name.value, c.allowedCategories.value);
   }
 
   BaseItemCategories() {
@@ -70,8 +69,11 @@ export class BlockSettingsFormComponent implements AfterViewInit {
     if (!this.settingsForm.valid) {
       return;
     }
-    
-    this.block().name = this.settingsForm.controls.name.value ?? this.block().name;
+    const name = this.settingsForm.controls.name.value ?? this.block().name;
+    if (name === "") {
+      return;
+    }
+    this.block().name = name;
     this.block().imgSrc = this.settingsForm.controls.imgUrl.value ?? this.block().imgSrc;
     this.block().rulesType = this.settingsForm.controls.rulesType.value ?? this.block().rulesType;
     this.block().allowedCategories = this.settingsForm.controls.allowedCategories.value ?? this.block().allowedCategories;

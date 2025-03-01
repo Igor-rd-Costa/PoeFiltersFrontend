@@ -8,11 +8,12 @@ import { PlayEffectInputComponent } from "./play-effect-input/play-effect-input.
 import { ItemService, Item, ItemCategory } from '../../../../../services/ItemService';
 import { BaseTypeInputComponent } from './base-type-input/base-type-input.component';
 import { FontSizeInputComponent } from "./font-size-input/font-size-input.component";
+import { RuleSettingsFormComponent } from "./rule-settings-form/rule-settings-form.component";
 
 @Component({
   selector: 'app-filter-rule',
   standalone: true,
-  imports: [ColorInputComponent, IconInputComponent, SoundInputComponent, PlayEffectInputComponent, BaseTypeInputComponent, FontSizeInputComponent],
+  imports: [ColorInputComponent, IconInputComponent, SoundInputComponent, PlayEffectInputComponent, BaseTypeInputComponent, FontSizeInputComponent, RuleSettingsFormComponent],
   templateUrl: './filter-rule.component.html',
 })
 export class FilterRuleComponent implements AfterViewInit {
@@ -120,28 +121,6 @@ export class FilterRuleComponent implements AfterViewInit {
     this.isInEditMode.set(true);  
   }
 
-  CancelEdit(event: MouseEvent) {
-    event.stopPropagation();
-    this.isInEditMode.set(false);
-  }
-
-  SaveRuleInfo(event: SubmitEvent) {
-    event.preventDefault();
-    const form = this.wrapper.nativeElement.querySelector("#filter-rule-wrapper-edit-form") as HTMLElement|null;
-    if (!form) {
-      return;
-    }
-    const nameInput = form.querySelector("#filter-rule-wrapper-edit-form-name-input") as HTMLInputElement|null;
-    const imgInput = form.querySelector("#filter-rule-wrapper-edit-form-img-input") as HTMLInputElement|null;
-
-    const nameValue = nameInput?.value ?? this.rule().name;
-    const imgValue = imgInput?.value ?? this.rule().imgSrc;
-
-    this.rule().name = nameValue;
-    this.rule().imgSrc = imgValue;
-    this.isInEditMode.set(false);
-  }
-
   AddBaseType(item: Item) {
     for (let i = 0; i < this.rule().items.length; i++) {
       if (this.rule().items[i] === item.id) {
@@ -208,6 +187,10 @@ export class FilterRuleComponent implements AfterViewInit {
       backgroundColor: bgC.active ? `rgba(${bgC.r}, ${bgC.g}, ${bgC.b}, ${bgC.a})` : 'rgba(0,0,0, 0.7)',
     };
     this.previewStyle.set(stl);
+  }
+
+  OnSettingsClose() {
+    this.isInEditMode.set(false);
   }
 
   protected GetPreviewStyle() {
