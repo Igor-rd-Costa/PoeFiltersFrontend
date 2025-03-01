@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, effect, ElementRef, Input, model, ModelSignal, OnChanges, signal, SimpleChanges, ViewChild } from '@angular/core';
 import { GetHTMLContentHeight } from '../../../../../utils/helpers';
-import { Color, ColorRGBA, FilterRuleInfo, FilterService } from '../../../../../services/FilterService';
+import { Color, ColorRGBA, FilterBlockRulesType, FilterRuleInfo, FilterService } from '../../../../../services/FilterService';
 import { ColorInputComponent } from './color-input/color-input.component';
 import { IconInputComponent } from "./icon-input/icon-input.component";
 import { SoundInputComponent } from "./sound-input/sound-input.component";
@@ -17,7 +17,8 @@ import { FontSizeInputComponent } from "./font-size-input/font-size-input.compon
 })
 export class FilterRuleComponent implements AfterViewInit {
   @ViewChild("wrapper") wrapper!: ElementRef<HTMLElement>;
-  @Input() itemCategories: string[] = [];
+  @Input({required: true}) itemCategories: string[] = [];
+  @Input({required: true}) ruleType: FilterBlockRulesType = FilterBlockRulesType.RULE_FULL;
   rule = model.required<FilterRuleInfo>();
   isExpanded = signal<boolean>(false);
   isInEditMode = signal<boolean>(false);

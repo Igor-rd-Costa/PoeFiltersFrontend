@@ -133,6 +133,10 @@ enum FilterRuleItemType {
   RULE, RULE_BLOCK
 }
 
+export enum FilterBlockRulesType {
+  RULE_MINIMAL, RULE_FULL
+}
+
 type FilterRule = {
   type: FilterRuleItemType,
   id: string,
@@ -156,6 +160,7 @@ type FilterBlock = {
   name: string,
   imgSrc: string,
   allowedCategories: string[],
+  rulesType: FilterBlockRulesType,
   rules: (FilterRule|FilterRuleBlock)[];
 }
 
@@ -201,6 +206,7 @@ export type FilterBlockInfo = {
   name: string,
   imgSrc: string,
   allowedCategories: string[],
+  rulesType: FilterBlockRulesType,
   rules: (FilterRuleInfo|FilterRuleBlockInfo)[]
 }
 
@@ -343,6 +349,7 @@ export class FilterService {
       const filter = this.filter();
       if (filter === null) {
         resolve();
+        return;
       }
       this.http.patch(this.backend, filter, {withCredentials: true}).subscribe({
         next: _ => {
@@ -425,6 +432,7 @@ export class FilterService {
           imgSrc: "",
           position: section.blocks.length,
           allowedCategories: [],
+          rulesType: FilterBlockRulesType.RULE_FULL,
           rules: []
         };
         section.blocks.push(block);
@@ -595,12 +603,16 @@ export class FilterService {
       }
       for (let j = 0; j < s.blocks.length; j++) {
         const b = s.blocks[j];
+        if (b.rulesType === undefined) {
+          b.rulesType = FilterBlockRulesType.RULE_FULL;
+        }
         const block: FilterBlockInfo = {
           id: b.id,
           name: b.name,
           imgSrc: b.imgSrc,
           position: j,
           allowedCategories: [...b.allowedCategories],
+          rulesType: b.rulesType,
           rules: []
         };
         for (let k = 0; k < b.rules.length; k++) {

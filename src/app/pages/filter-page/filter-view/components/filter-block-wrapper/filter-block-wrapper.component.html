@@ -24,7 +24,7 @@
       @for (rule of block().rules; track rule.id) {
         @if (rule.type === 0) {
           <div class="w-full">
-              <app-filter-rule [itemCategories]="block().allowedCategories" [rule]="CastToRule(rule)"/>
+              <app-filter-rule [itemCategories]="block().allowedCategories" [ruleType]="block().rulesType" [rule]="CastToRule(rule)"/>
               <div id="filter-rule-drag-target" [attr.data-block]="block().id" class="w-full grid justify-items-center pt-3 pb-3 h-fit" 
               [attr.data-dragPosition]="$index + 1" (dragover)="OnDragOver($event)" (dragleave)="OnMouseLeave($event)">
                 <div class="w-[90%] h-[1px] pointer-events-none"></div>
@@ -64,6 +64,14 @@
               <label class="text-[0.9rem] font-mono">Image Source</label>
               <br>
               <input id="filter-block-wrapper-edit-form-img-input" class="pl-2 rounded-md outline-none" type="text" [value]="block().imgSrc">
+            </div>
+            <div class="">
+              <label class="text-[0.9rem] font-mono">Rules Type</label>
+              <br>
+              <select id="filter-block-wrapper-edit-form-rules-type-input" class="pl-2 h-[1.8rem] rounded-md outline-none">
+                <option [value]="FilterBlockRulesType.RULE_MINIMAL">Minimal</option>
+                <option [value]="FilterBlockRulesType.RULE_FULL">Full</option>
+              </select>
             </div>
           </div>
           <div class="flex flex-col gap-y-4">

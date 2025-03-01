@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, effect, ElementRef, model, signal, ViewChild } from '@angular/core';
 import { FilterRuleComponent } from '../filter-rule/filter-rule.component';
-import { FilterBlockInfo, FilterRuleBlockInfo, FilterRuleInfo, FilterService } from '../../../../../services/FilterService';
+import { FilterBlockInfo, FilterBlockRulesType, FilterRuleBlockInfo, FilterRuleInfo, FilterService } from '../../../../../services/FilterService';
 import { ItemCategory, ItemService } from '../../../../../services/ItemService';
 import { GetHTMLContentHeight } from '../../../../../utils/helpers';
 import { AuthService } from '../../../../../services/AuthService';
@@ -29,6 +29,7 @@ import { ItemCategoryService } from '../../../../../services/ItemCategoryService
 export class FilterBlockWrapperComponent implements AfterViewInit {
   @ViewChild('wrapper') wrapper!: ElementRef<HTMLElement>;
   block = model.required<FilterBlockInfo>();
+  FilterBlockRulesType = FilterBlockRulesType;
   protected isExpanded = signal<boolean>(false);
   protected isInEditMode = signal<boolean>(false);
   baseCategories: ItemCategory[] = [];
@@ -39,6 +40,12 @@ export class FilterBlockWrapperComponent implements AfterViewInit {
     effect(() => {
       if (this.isInEditMode()) {
         this.GetBaseTypeCategories();
+        setTimeout(() => {
+          const select = this.wrapper.nativeElement.querySelector('#filter-block-wrapper-edit-form-rules-type-input') as HTMLSelectElement;
+          if (select) {
+            select.value = this.block().rulesType.toString();
+          }
+        });
       }
     })
   }
@@ -193,12 +200,15 @@ export class FilterBlockWrapperComponent implements AfterViewInit {
     }
     const nameInput = form.querySelector("#filter-block-wrapper-edit-form-name-input") as HTMLInputElement|null;
     const imgInput = form.querySelector("#filter-block-wrapper-edit-form-img-input") as HTMLInputElement|null;
+    const rulesTypeInput = this.wrapper.nativeElement.querySelector('#filter-block-wrapper-edit-form-rules-type-input') as HTMLSelectElement|null;
 
     const nameValue = nameInput?.value ?? this.block().name;
     const imgValue = imgInput?.value ?? this.block().imgSrc;
+    const rulesTypeValue = parseInt(rulesTypeInput?.value ?? this.block().rulesType.toString()) as FilterBlockRulesType;
 
     this.block().name = nameValue;
     this.block().imgSrc = imgValue;
+    this.block().rulesType = rulesTypeValue;
     this.isInEditMode.set(false);
   }
 
@@ -231,6 +241,5 @@ export class FilterBlockWrapperComponent implements AfterViewInit {
   async GetBaseTypeCategories() {
     this.baseCategories = this.itemCategoryService.BaseCategories();
     this.customCategories = this.itemCategoryService.ItemCategories();
-    console.log(this.customCategories);
   }
 }
