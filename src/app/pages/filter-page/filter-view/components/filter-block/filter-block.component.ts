@@ -6,11 +6,12 @@ import { GetHTMLContentHeight } from '../../../../../utils/helpers';
 import { AuthService } from '../../../../../services/AuthService';
 import { FilterRuleBlockComponent } from "../filter-rule-block/filter-rule-block.component";
 import { ItemCategoryService } from '../../../../../services/ItemCategoryService';
+import { BlockSettingsFormComponent } from "./block-settings-form/block-settings-form.component";
 
 @Component({
   selector: 'app-filter-block',
   standalone: true,
-  imports: [FilterRuleComponent, FilterRuleBlockComponent],
+  imports: [FilterRuleComponent, FilterRuleBlockComponent, BlockSettingsFormComponent],
   templateUrl: './filter-block.component.html',
   styles: `
     :host {
@@ -32,20 +33,10 @@ export class FilterBlockComponent implements AfterViewInit {
   FilterBlockRulesType = FilterBlockRulesType;
   protected isExpanded = signal<boolean>(false);
   protected isInEditMode = signal<boolean>(false);
-  baseCategories: ItemCategory[] = [];
-  customCategories: ItemCategory[] = [];
-  
 
   constructor(private filterService: FilterService, private itemCategoryService: ItemCategoryService, protected authService: AuthService) {
     effect(() => {
       if (this.isInEditMode()) {
-        this.GetBaseTypeCategories();
-        setTimeout(() => {
-          const select = this.wrapper.nativeElement.querySelector('#filter-block-wrapper-edit-form-rules-type-input') as HTMLSelectElement;
-          if (select) {
-            select.value = this.block().rulesType.toString();
-          }
-        });
       }
     })
   }
@@ -187,59 +178,7 @@ export class FilterBlockComponent implements AfterViewInit {
     this.filterService.DeleteBlock(this.block().id);
   }
 
-  CancelEdit(event: MouseEvent) {
-    event.stopPropagation();
+  OnSettingsClose() {
     this.isInEditMode.set(false);
-  }
-
-  SaveBlockInfo(event: SubmitEvent) {
-    event.preventDefault();
-    const form = this.wrapper.nativeElement.querySelector("#filter-block-wrapper-edit-form") as HTMLElement|null;
-    if (!form) {
-      return;
-    }
-    const nameInput = form.querySelector("#filter-block-wrapper-edit-form-name-input") as HTMLInputElement|null;
-    const imgInput = form.querySelector("#filter-block-wrapper-edit-form-img-input") as HTMLInputElement|null;
-    const rulesTypeInput = this.wrapper.nativeElement.querySelector('#filter-block-wrapper-edit-form-rules-type-input') as HTMLSelectElement|null;
-
-    const nameValue = nameInput?.value ?? this.block().name;
-    const imgValue = imgInput?.value ?? this.block().imgSrc;
-    const rulesTypeValue = parseInt(rulesTypeInput?.value ?? this.block().rulesType.toString()) as FilterBlockRulesType;
-
-    this.block().name = nameValue;
-    this.block().imgSrc = imgValue;
-    this.block().rulesType = rulesTypeValue;
-    this.isInEditMode.set(false);
-  }
-
-
-
-
-
-  //
-
-  IsCategoryIncluded(category: ItemCategory) {
-    for (let i = 0; i < this.block().allowedCategories.length; i++) {
-      if (this.block().allowedCategories[i] === category.id) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  ToggleIncludedCategories(category: ItemCategory) {
-    for (let i = 0; i < this.block().allowedCategories.length; i++) {
-      if (this.block().allowedCategories[i] === category.id) {
-        this.block().allowedCategories.splice(i, 1);
-        return;
-      }
-    }
-    console.log("Adding Category", category);
-    this.block().allowedCategories.push(category.id);
-  }
-
-  async GetBaseTypeCategories() {
-    this.baseCategories = this.itemCategoryService.BaseCategories();
-    this.customCategories = this.itemCategoryService.ItemCategories();
   }
 }
