@@ -17,7 +17,7 @@
   <div class="pl-4 pr-4">
     @for (block of section.blocks; track block.id) {
       <div>
-        <app-filter-block-wrapper [block]="block"/>
+        <app-filter-block [block]="block"/>
         <div id="filter-block-drag-target" [attr.data-section]="section.id" class="w-full   grid justify-items-center pt-3 pb-3 h-fit" 
         [attr.data-dragPosition]="$index + 1" (dragover)="OnDragOver($event)" (dragleave)="OnMouseLeave($event)">
         <div class="w-[90%] h-[1px] pointer-events-none"></div>

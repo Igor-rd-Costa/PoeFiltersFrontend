@@ -8,10 +8,10 @@ import { FilterRuleBlockComponent } from "../filter-rule-block/filter-rule-block
 import { ItemCategoryService } from '../../../../../services/ItemCategoryService';
 
 @Component({
-  selector: 'app-filter-block-wrapper',
+  selector: 'app-filter-block',
   standalone: true,
   imports: [FilterRuleComponent, FilterRuleBlockComponent],
-  templateUrl: './filter-block-wrapper.component.html',
+  templateUrl: './filter-block.component.html',
   styles: `
     :host {
       width: 100%;
@@ -26,7 +26,7 @@ import { ItemCategoryService } from '../../../../../services/ItemCategoryService
     }
   `
 })
-export class FilterBlockWrapperComponent implements AfterViewInit {
+export class FilterBlockComponent implements AfterViewInit {
   @ViewChild('wrapper') wrapper!: ElementRef<HTMLElement>;
   block = model.required<FilterBlockInfo>();
   FilterBlockRulesType = FilterBlockRulesType;

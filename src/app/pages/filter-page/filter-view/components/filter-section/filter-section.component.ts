@@ -1,12 +1,12 @@
 import { AfterViewInit, Component, ElementRef, Input, signal, ViewChild } from '@angular/core';
 import { FilterSectionInfo, FilterService } from '../../../../../services/FilterService';
-import { FilterBlockWrapperComponent } from '../filter-block-wrapper/filter-block-wrapper.component';
+import { FilterBlockComponent } from '../filter-block/filter-block.component';
 import { AuthService } from '../../../../../services/AuthService';
 
 @Component({
   selector: 'app-filter-section',
   standalone: true,
-  imports: [FilterBlockWrapperComponent],
+  imports: [FilterBlockComponent],
   templateUrl: './filter-section.component.html',
   styles: `
     :host {

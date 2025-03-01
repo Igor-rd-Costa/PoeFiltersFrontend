@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, model, signal, ViewChild } from '@angular/core';
-import { FilterRuleBlockInfo, FilterService } from '../../../../../services/FilterService';
+import { FilterBlockRulesType, FilterRuleBlockInfo, FilterService } from '../../../../../services/FilterService';
 import { GetHTMLContentHeight } from '../../../../../utils/helpers';
 import { FilterRuleComponent } from '../filter-rule/filter-rule.component';
 
@@ -26,6 +26,7 @@ export class FilterRuleBlockComponent {
   @ViewChild('wrapper') wrapper!: ElementRef<HTMLElement>;
   @Input() itemCategories: string[] = [];
   @Input({required: true}) blockId: string = "";
+  @Input({required: true}) rulesType: FilterBlockRulesType = FilterBlockRulesType.RULE_FULL;
   ruleBlock = model.required<FilterRuleBlockInfo>();
   protected isExpanded = signal<boolean>(false);
   protected isInEditMode = signal<boolean>(false);

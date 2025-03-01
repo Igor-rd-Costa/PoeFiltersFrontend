@@ -26,7 +26,7 @@
         </div>
         @for (rule of ruleBlock().rules; track $index) {
           <div class="w-full">
-            <app-filter-rule [itemCategories]="itemCategories" [rule]="rule"/>
+            <app-filter-rule [itemCategories]="itemCategories" [ruleType]="rulesType" [rule]="rule"/>
             <div id="filter-rule-drag-target" [attr.data-block]="blockId" [attr.data-ruleBlock]="ruleBlock().id" class="w-full grid justify-items-center pt-3 pb-3 h-fit" 
             [attr.data-dragPosition]="$index + 1" (dragover)="OnDragOver($event)" (dragleave)="OnMouseLeave($event)">
               <div class="w-[90%] h-[1px] pointer-events-none"></div>
