@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, effect, ElementRef, signal, ViewChild } from '@angular/core';
-import { FilterData, FilterService } from '../../services/FilterService';
+import { FilterService } from '../../services/FilterService';
 import { AppView, ViewService } from '../../services/ViewService';
 import { GetHTMLContentHeight } from '../../utils/helpers';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/AuthService';
+import { FilterData } from '../../types/FilterTypes';
 
 @Component({
   selector: 'app-load-filter-page',

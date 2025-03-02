@@ -1,6 +1,6 @@
 import { Component, ElementRef, model, ViewChild } from '@angular/core';
-import { DropPlayEffect, IconColor } from '../../../../../../services/FilterService';
 import { FilterViewComponent } from '../../../filter-view.component';
+import { DropPlayEffect, IconColor } from '../../../../../../types/FilterTypes';
 
 @Component({
   selector: 'app-play-effect-input',

@@ -1,7 +1,8 @@
 import { Component, ElementRef, model, ViewChild } from '@angular/core';
-import { DropIcon, IconColor, iconColors, IconShape, iconShapes, IconSize } from '../../../../../../services/FilterService';
+import { iconColors, iconShapes } from '../../../../../../services/FilterService';
 import { FilterViewComponent } from '../../../filter-view.component';
 import { IconOptionsMenuViewMode } from '../../../components/icon-options-menu/icon-options-menu.component';
+import { DropIcon, IconColor, IconShape, IconSize } from '../../../../../../types/FilterTypes';
 
 @Component({
   selector: 'app-icon-input',

@@ -1,5 +1,4 @@
-import { ColorHSV, ColorRGB } from "../services/FilterService";
-
+import { ColorHSV, ColorRGB, IPositionable } from "../types/FilterTypes";
 
 export function GetHTMLContentHeight(element: HTMLElement) {
   let height = 0;
@@ -47,4 +46,11 @@ export function RGBToHSV(color: ColorRGB): ColorHSV {
   const v = max * 100;
 
   return { h, s, v };
+}
+
+export function IPositionableSortFn(a: IPositionable, b: IPositionable) {
+  if (a.position < b.position) {
+    return -1;
+  }
+  return 1;
 }

@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, ElementRef, Input, signal, ViewChild } from '@angular/core';
-import { FilterSectionInfo, FilterService } from '../../../../../services/FilterService';
+import { FilterService } from '../../../../../services/FilterService';
 import { FilterBlockComponent } from '../filter-block/filter-block.component';
 import { AuthService } from '../../../../../services/AuthService';
+import { FilterSectionInfo } from '../../../../../types/FilterTypes';
 
 @Component({
   selector: 'app-filter-section',

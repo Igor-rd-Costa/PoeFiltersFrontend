@@ -27,7 +27,7 @@
           <label class="text-mono text-main text-[0.9rem]">Basetypes</label>
           <div class="border p-2 border-main rounded-md h-full w-full bg-[#333F] shadow-inner-card">
             <ul class="flex flex-wrap gap-2">
-              @for (item of items; track $index) {
+              @for (item of items(); track $index) {
                 <li class="bg-[#444F] pl-2 pr-2 h-[1.8rem] text-[#AAAF] rounded shadow-card flex gap-x-1 justify-items-center 
                 items-center cursor-pointer">
                   <p class="w-fit text-nowrap">{{item.name}}</p>
@@ -48,26 +48,26 @@
         <div class="relative border border-main rounded-md w-full h-[120px] bg-poe2-item-preview">
           @if (rule().state !== "Disabled") {
             <div [style]="previewStyle()" class="absolute top-[33px] left-[54px] border
-            flex items-center justify-center font-fontin tracking-[0.06em] p-1">{{items.length > 0 ? items[0].name : ""}}</div>
+            flex items-center justify-center font-fontin tracking-[0.06em] p-1">{{items().length > 0 ? items()[0].name : ""}}</div>
           }
         </div>
 
         <div class="grid grid-cols-2 auto-rows-auto gap-y-2 gap-x-8">
-          <app-font-size-input [fontSize]="rule().style.fontSize" (fontsizechange)="OnFontSizeChange($event)"/>
+          <app-font-size-input [fontSize]="ruleStyle().fontSize" (fontsizechange)="OnFontSizeChange($event)"/>
           <button class="w-[90px] h-fit self-end cursor-pointer rounded-md bg-main bg-grad-bl justify-self-end hover:bg-mainBright
           font-mono col-start-2 row-start-1 uppercase text-dark text-[1rem] shadow-[1px_1px_2px_1px_#000F]" (click)="ResetStyles()">
             Reset 
           </button>
           
-          <app-sound-input [sound]="rule().style.dropSound" class="col-start-1 row-start-2"/>
+          <app-sound-input [sound]="ruleStyle().dropSound" class="col-start-1 row-start-2"/>
 
-          <app-icon-input [icon]="rule().style.dropIcon" class="col-start-1 row-start-3"/>
+          <app-icon-input [icon]="ruleStyle().dropIcon" class="col-start-1 row-start-3"/>
 
-          <app-play-effect-input [playEffect]="rule().style.dropPlayEffect" class="col-start-1 row-start-4"/>
+          <app-play-effect-input [playEffect]="ruleStyle().dropPlayEffect" class="col-start-1 row-start-4"/>
 
-          <app-color-input heading="Text Color" [color]="rule().style.textColor" (change)="OnTextColorInputChange($event)"/>
-          <app-color-input heading="Border Color" [color]="rule().style.borderColor" (change)="OnBorderColorInputChange($event)"/>
-          <app-color-input heading="Background Color" [color]="rule().style.backgroundColor" (change)="OnBackgroundColorInputChange($event)"/>
+          <app-color-input heading="Text Color" [color]="ruleStyle().textColor" (change)="OnTextColorInputChange($event)"/>
+          <app-color-input heading="Border Color" [color]="ruleStyle().borderColor" (change)="OnBorderColorInputChange($event)"/>
+          <app-color-input heading="Background Color" [color]="ruleStyle().backgroundColor" (change)="OnBackgroundColorInputChange($event)"/>
         </div>
       </div>
       } @else {

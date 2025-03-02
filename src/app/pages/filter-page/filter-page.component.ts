@@ -7,6 +7,8 @@ import { FilterViewComponent } from './filter-view/filter-view.component';
 import { FilterExportViewComponent } from "./filter-export-view/filter-export-view.component";
 import { UserAdminViewComponent } from "./user-admin-view/user-admin-view.component";
 import { AuthService } from '../../services/AuthService';
+import { ItemService } from '../../services/ItemService';
+import { ItemCategoryService } from '../../services/ItemCategoryService';
 
 @Component({
   selector: 'app-filter-page',
@@ -17,17 +19,14 @@ import { AuthService } from '../../services/AuthService';
 export class FilterPageComponent implements AfterViewInit {
   AppView = AppView;
 
-  constructor(protected authService: AuthService, protected filterService: FilterService, protected viewService: ViewService) {}
+  constructor(protected authService: AuthService, protected filterService: FilterService, protected viewService: ViewService,
+    private itemService: ItemService, private itemCategoryService: ItemCategoryService) {}
 
-  ngAfterViewInit(): void {
+  async ngAfterViewInit() {
     if (this.filterService.Filter() === null) {
       this.viewService.SetView(AppView.FILTER_LOAD);
     }
-    setTimeout(() => {
-      const user = this.authService.User();
-      if (user) {
-        //this.viewService.SetView(AppView.USER_ADMIN);
-      }
-    }, 500);
+    await this.itemService.Init();
+    await this.itemCategoryService.Init();
   }
 }

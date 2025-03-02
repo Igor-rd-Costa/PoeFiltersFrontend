@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, effect, ElementRef, Input, model, ModelSignal, OnChanges, signal, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, computed, effect, ElementRef, Input, model, signal, ViewChild } from '@angular/core';
 import { GetHTMLContentHeight } from '../../../../../utils/helpers';
-import { Color, ColorRGBA, FilterBlockRulesType, FilterRuleInfo, FilterService } from '../../../../../services/FilterService';
+import { FilterService } from '../../../../../services/FilterService';
 import { ColorInputComponent } from './color-input/color-input.component';
 import { IconInputComponent } from "./icon-input/icon-input.component";
 import { SoundInputComponent } from "./sound-input/sound-input.component";
@@ -9,6 +9,7 @@ import { ItemService, Item, ItemCategory } from '../../../../../services/ItemSer
 import { BaseTypeInputComponent } from './base-type-input/base-type-input.component';
 import { FontSizeInputComponent } from "./font-size-input/font-size-input.component";
 import { RuleSettingsFormComponent } from "./rule-settings-form/rule-settings-form.component";
+import { Color, ColorRGBA, FilterBlockRulesType, FilterRuleInfo, RuleStyle } from '../../../../../types/FilterTypes';
 
 @Component({
   selector: 'app-filter-rule',
@@ -21,6 +22,10 @@ export class FilterRuleComponent implements AfterViewInit {
   @Input({required: true}) itemCategories: string[] = [];
   @Input({required: true}) ruleType: FilterBlockRulesType = FilterBlockRulesType.RULE_FULL;
   rule = model.required<FilterRuleInfo>();
+  ruleStyle = computed(() => {
+    const r = this.rule();
+    return (r.style as RuleStyle);
+  });
   isExpanded = signal<boolean>(false);
   isInEditMode = signal<boolean>(false);
   previewStyle = signal<{
@@ -29,39 +34,36 @@ export class FilterRuleComponent implements AfterViewInit {
     borderColor: string,
     backgroundColor: string,
   }>({fontSize: '16px', color: 'rgb(0, 0, 0)', borderColor: 'rgb(0, 0, 0)', backgroundColor: 'rgb(0, 0, 0)'});
-  items: Item[] = [];
+  items = computed(() => {
+    const itemIds = this.rule().items;
+    return this.itemService.GetItemsById(itemIds);
+  });
   categories: ItemCategory[] = [];
 
-  constructor(private itemService: ItemService, private filterService: FilterService) {
-    effect(() => {
-      if (this.isInEditMode()) {
-        //this.GetBaseTypeCategories();
-      }
-    })
-  }
+  constructor(private itemService: ItemService, private filterService: FilterService) {}
 
-  async ngAfterViewInit() {
+  ngAfterViewInit() {
     if (this.rule().items.length === 0) {
       this.rule().state = "Disabled";
     }
     if (this.rule().items.length > 0) {
-      this.items = this.itemService.GetItemsById(this.rule().items);
+      
     }
     this.UpdatePreviewStyle();
   }
 
   OnTextColorInputChange(value: ColorRGBA) {
-    this.rule().style.textColor = {...value, active: true};
+    (this.rule().style as RuleStyle).textColor = {...value, active: true};
     this.UpdatePreviewStyle();
   }
 
   OnBorderColorInputChange(value: ColorRGBA) {
-    this.rule().style.borderColor = {...value, active: true};
+    (this.rule().style as RuleStyle).borderColor = {...value, active: true};
     this.UpdatePreviewStyle();
   }
 
   OnBackgroundColorInputChange(value: ColorRGBA) {
-    this.rule().style.backgroundColor = {...value, active: true};
+    (this.rule().style as RuleStyle).backgroundColor = {...value, active: true};
     this.UpdatePreviewStyle();
   }
 
@@ -128,7 +130,7 @@ export class FilterRuleComponent implements AfterViewInit {
       }
     }
     this.rule().items.push(item.id);
-    this.items.push(item);
+    this.items().push(item);
     if (this.rule().state === "Disabled") {
       this.rule().state = "Show";
     }
@@ -155,7 +157,7 @@ export class FilterRuleComponent implements AfterViewInit {
   }
 
   OnFontSizeChange(fontSize: number) {
-    this.rule().style.fontSize = fontSize;
+    (this.rule().style as RuleStyle).fontSize = fontSize;
     this.UpdatePreviewStyle();
   }
 
@@ -174,11 +176,15 @@ export class FilterRuleComponent implements AfterViewInit {
   }
 
   private UpdatePreviewStyle() {
-    const tx = this.rule().style.textColor;
-    const bc = this.rule().style.borderColor;
-    const bgC = this.rule().style.backgroundColor;
+    const style = this.rule().style;
+    if (typeof style === 'string') {
+      return;  
+    }
+    const tx = style.textColor;
+    const bc = style.borderColor;
+    const bgC = style.backgroundColor;
     const basePx = 16.32;
-    const fs = basePx * (this.rule().style.fontSize / 32);
+    const fs = basePx * (style.fontSize / 32);
 
     let stl = {
       fontSize: fs + 'px',
@@ -194,11 +200,15 @@ export class FilterRuleComponent implements AfterViewInit {
   }
 
   protected GetPreviewStyle() {
-    const tx = this.rule().style.textColor;
-    const bc = this.rule().style.borderColor;
-    const bgC = this.rule().style.backgroundColor;
+    const style = this.rule().style; 
+    if (typeof style === 'string') {
+      return {};
+    }
+    const tx = style.textColor;
+    const bc = style.borderColor;
+    const bgC = style.backgroundColor;
     const basePx = 16.32;
-    const fs = basePx * (this.rule().style.fontSize / 32);
+    const fs = basePx * (style.fontSize / 32);
 
     let stl = {
       fontSize: fs + 'px',

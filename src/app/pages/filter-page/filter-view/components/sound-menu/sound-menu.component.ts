@@ -1,6 +1,7 @@
 import { Component, ElementRef, ModelSignal, signal, ViewChild } from '@angular/core';
-import { DropSound, dropSounds } from '../../../../../services/FilterService';
+import { dropSounds } from '../../../../../services/FilterService';
 import { Observable, Subscriber } from 'rxjs';
+import { DropSound } from '../../../../../types/FilterTypes';
 
 export enum SoundMenuViewMode {
   VOLUME, SOUND

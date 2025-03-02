@@ -1,7 +1,8 @@
 import { Component, ElementRef, Input, model, signal, ViewChild } from '@angular/core';
-import { FilterBlockRulesType, FilterRuleBlockInfo, FilterService } from '../../../../../services/FilterService';
+import { FilterService } from '../../../../../services/FilterService';
 import { GetHTMLContentHeight } from '../../../../../utils/helpers';
 import { FilterRuleComponent } from '../filter-rule/filter-rule.component';
+import { FilterBlockRulesType, FilterRuleBlockInfo } from '../../../../../types/FilterTypes';
 
 @Component({
   selector: 'app-filter-rule-block',

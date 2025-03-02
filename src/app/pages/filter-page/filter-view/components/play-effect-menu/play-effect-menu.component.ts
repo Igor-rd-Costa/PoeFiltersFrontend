@@ -1,6 +1,7 @@
 import { Component, ElementRef, ModelSignal, signal, ViewChild } from '@angular/core';
-import { DropPlayEffect, IconColor, iconColors } from '../../../../../services/FilterService';
+import { iconColors } from '../../../../../services/FilterService';
 import { Observable, Subscriber } from 'rxjs';
+import { DropPlayEffect, IconColor } from '../../../../../types/FilterTypes';
 
 @Component({
   selector: 'app-play-effect-menu',
@@ -66,5 +67,6 @@ export class PlayEffectMenuComponent {
       case 'Pink': return "#f36be2";
       case 'Purple': return "#4c0ea2";
     }
+    return "#000F";
   }
 }

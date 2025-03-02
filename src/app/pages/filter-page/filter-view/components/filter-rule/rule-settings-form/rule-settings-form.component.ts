@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, EventEmitter, model, Output } from '@angular/core';
-import { FilterRuleInfo } from '../../../../../../services/FilterService';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FilterRuleInfo } from '../../../../../../types/FilterTypes';
 
 @Component({
   selector: 'app-rule-settings-form',

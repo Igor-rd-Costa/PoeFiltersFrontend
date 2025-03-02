@@ -1,7 +1,7 @@
 import { Component, ElementRef, model, ViewChild } from '@angular/core';
-import { DropSound } from '../../../../../../services/FilterService';
 import { FilterViewComponent } from '../../../filter-view.component';
 import { SoundMenuViewMode } from '../../../components/sound-menu/sound-menu.component';
+import { DropSound } from '../../../../../../types/FilterTypes';
 
 @Component({
   selector: 'app-sound-input',

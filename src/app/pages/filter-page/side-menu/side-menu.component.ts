@@ -3,7 +3,8 @@ import { FilterSelectComponent } from "./filter-select/filter-select.component";
 import { MenuSectionComponent } from './menu-section/menu-section.component';
 import { MenuItemComponent } from './menu-item/menu-item.component';
 import { AppView, ViewService } from '../../../services/ViewService';
-import { Filter, FilterInfo, FilterService } from '../../../services/FilterService';
+import { FilterService } from '../../../services/FilterService';
+import { FilterInfo } from '../../../types/FilterTypes';
 
 @Component({
   selector: 'app-side-menu',

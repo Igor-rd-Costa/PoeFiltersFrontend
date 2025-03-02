@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, computed, signal, ViewChild } from '@angular/core';
 import { ItemService, Item, ItemCategory } from '../../../services/ItemService';
 import { AuthService } from '../../../services/AuthService';
 import { AppView, ViewService } from '../../../services/ViewService';
@@ -14,9 +14,16 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 })
 export class UserAdminViewComponent implements AfterViewInit {
   @ViewChild(CategoryItemInfoPopUpComponent) infoPopUp!: CategoryItemInfoPopUpComponent;
-  baseCategories = signal<ItemCategory[]>([]);
-  categories = signal<ItemCategory[]>([]);
-  items = signal<Item[]>([]);
+  baseCategories = computed(() => {
+    return this.itemCategoryService.BaseCategories();
+  });
+
+  categories = computed(() => {
+    return this.itemCategoryService.ItemCategories();
+  });
+  items = computed(() => {
+    return this.itemService.Items();
+  });
   isAddCategoryFormVisible = signal<boolean>(false);
   addCategoryForm = new FormGroup({
     name: new FormControl<string>('', {validators: [Validators.required, Validators.minLength(3), Validators.maxLength(50)]})
@@ -31,7 +38,6 @@ export class UserAdminViewComponent implements AfterViewInit {
       this.viewService.SetView(AppView.FILTER_VIEW);
       return;  
     }
-    this.GetData();
   }
 
   protected ShowAddItemCategoryForm() {
@@ -46,15 +52,8 @@ export class UserAdminViewComponent implements AfterViewInit {
     this.infoPopUp.ShowItemInfo(item);
   }
 
-  async GetData() {
-
-    this.baseCategories.set(this.itemCategoryService.BaseCategories().sort(this.CategoriesSortFn));
-    this.categories.set(this.itemCategoryService.ItemCategories().sort(this.CategoriesSortFn));
-    this.items.set(this.itemService.Items());
-  }
-
   async UpdateCategories() {
-    this.baseCategories.set((await this.itemCategoryService.UpdateBaseItemCategories()).sort(this.CategoriesSortFn));
+    await this.itemCategoryService.UpdateBaseItemCategories();
   }
 
   async AddCategory(event: SubmitEvent) {
@@ -64,12 +63,7 @@ export class UserAdminViewComponent implements AfterViewInit {
     }
     const categoryName = this.addCategoryForm.controls.name.value;
     if (categoryName) {
-      const id = await this.itemCategoryService.AddItemCategory(categoryName);
-      if (id !== null) {
-        const categories = this.categories();
-        categories.push({id: id, name: categoryName});
-        this.categories.set(categories.sort(this.CategoriesSortFn));
-      }
+      await this.itemCategoryService.AddItemCategory(categoryName);
     }
   }
 

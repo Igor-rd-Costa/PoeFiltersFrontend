@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, signal } from "@angular/core";
 import { AppComponent } from "../app.component";
-import { Item, ItemCategory } from "./ItemService";
+import { ItemCategory } from "./ItemService";
 
 
 @Injectable()
@@ -10,9 +10,11 @@ export class ItemCategoryService {
   private baseCategories = signal<ItemCategory[]>([]);
   private categories = signal<ItemCategory[]>([]);
 
-  constructor(private http: HttpClient) {
-    this.GetBaseItemCategories();
-    this.GetItemCategories();
+  constructor(private http: HttpClient) {}
+  
+  async Init() {
+    await this.GetBaseItemCategories();
+    await this.GetItemCategories();
   }
 
   ItemCategories() {
@@ -27,7 +29,7 @@ export class ItemCategoryService {
     return new Promise<void>(resolve => {
       this.http.get<ItemCategory[]>(this.backend+"custom", {withCredentials: true}).subscribe({
         next: categories => {
-          this.categories.set(categories);
+          this.categories.set(categories.sort(this.CategorySortFn));
           resolve();
         },
         error: err => {
@@ -42,7 +44,7 @@ export class ItemCategoryService {
     return new Promise<void>(resolve => {
       this.http.get<ItemCategory[]>(this.backend+"base", {withCredentials: true}).subscribe({
         next: categories => {
-          this.baseCategories.set(categories);
+          this.baseCategories.set(categories.sort(this.CategorySortFn));
           resolve();
         },
         error: err => {
@@ -89,30 +91,41 @@ export class ItemCategoryService {
   }
 
   AddItemCategory(categoryName: string) {
-    return new Promise<string|null>(resolve => {
+    return new Promise<void>(resolve => {
       this.http.post<string>(this.backend+"custom", {categoryName}, {withCredentials: true}).subscribe({
         next: id => {
-          resolve(id);
+          const categories = this.ItemCategories();
+          categories.push({id: id, name: categoryName});
+          this.categories.set(categories.sort(this.CategorySortFn));
+          resolve();
         },
         error: err => {
           console.error(err);
-          resolve(null);
+          resolve();
         }
       })
     });
   }
 
   UpdateBaseItemCategories() {
-    return new Promise<ItemCategory[]>(resolve => {
+    return new Promise<void>(resolve => {
       this.http.patch<ItemCategory[]>(this.backend+"base", {}, {withCredentials: true}).subscribe({
         next: categories => {
-          resolve(categories);
+          this.baseCategories.set(categories.sort(this.CategorySortFn));
+          resolve();
         },
         error: err => {
           console.error(err);
-          resolve([]);
+          resolve();
         }
       })
     });
+  }
+
+  private CategorySortFn(a: ItemCategory, b: ItemCategory) {
+    if (a.name < b.name) {
+      return -1;
+    }
+    return 1;
   }
 }

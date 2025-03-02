@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, model, ModelSignal, Output, ViewChild } from '@angular/core';
-import { Color, ColorRGBA } from '../../../../../../services/FilterService';
 import { FilterViewComponent } from '../../../filter-view.component';
+import { Color, ColorRGBA } from '../../../../../../types/FilterTypes';
 
 @Component({
   selector: 'app-color-input',

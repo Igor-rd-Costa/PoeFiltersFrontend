@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, EventEmitter, model, Output } from '@angular/core';
-import { FilterBlockInfo, FilterBlockRulesType } from '../../../../../../services/FilterService';
 import { ItemCategoryService } from '../../../../../../services/ItemCategoryService';
 import { ItemCategory } from '../../../../../../services/ItemService';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FilterBlockInfo, FilterBlockRulesType } from '../../../../../../types/FilterTypes';
 
 @Component({
   selector: 'app-block-settings-form',

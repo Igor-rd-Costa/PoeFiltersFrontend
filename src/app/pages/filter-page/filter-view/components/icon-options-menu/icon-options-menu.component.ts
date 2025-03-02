@@ -1,6 +1,7 @@
 import { Component, ElementRef, ModelSignal, signal, ViewChild } from '@angular/core';
 import { Observable, Subscriber } from 'rxjs';
-import { DropIcon, IconColor, iconColors, IconShape, iconShapes, IconSize, iconSizes } from '../../../../../services/FilterService';
+import { iconColors, iconShapes, iconSizes } from '../../../../../services/FilterService';
+import { DropIcon, IconColor, IconShape, IconSize } from '../../../../../types/FilterTypes';
 
 export enum IconOptionsMenuViewMode {
   SHAPE, SIZE, COLOR,

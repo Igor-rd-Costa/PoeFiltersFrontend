@@ -2,60 +2,10 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable, signal } from "@angular/core";
 import { AppComponent } from "../app.component";
 import { v4 } from 'uuid'
-import { AuthService } from "./AuthService";
-
-
-type FilterGame = "PoE1" | "PoE2"
-export type Color = {
-  active: boolean,
-  r: number,
-  g: number,
-  b: number,
-  a: number,
-}
-
-export type ColorRGBA = {
-  r: number,
-  g: number,
-  b: number,
-  a: number,
-}
-
-export type ColorRGB = {
-  r: number,
-  g: number,
-  b: number,
-}
-
-export type ColorHSVA = {
-  h: number,
-  s: number,
-  v: number,
-  a: number,
-}
-
-export type ColorHSV = {
-  h: number,
-  s: number,
-  v: number,
-}
-
-export type FilterData = {
-  id: string,
-  name: string,
-  modifiedAt: Date,
-  game: FilterGame
-}
-
-export type IconSize = 0 | 1 | 2;
-export type IconColor = "Red" | "Green" | "Blue" | "Brown" | "White" | "Yellow" | "Cyan" | "Grey" | "Orange" | "Pink" | "Purple";
-export type IconShape = "Circle" | "Diamond" | "Hexagon" | "Square" | "Star" | "Triangle" | "Cross" | "Moon" 
-| "Raindrop" | "Kite" | "Pentagon" | "UpsideDownHouse"
-
-type DropSoundInfo = {
-  file: string,
-  name: string
-}
+import { DropSoundInfo, Filter, FilterBlock, FilterBlockInfo, FilterBlockRulesType, FilterInfo, FilterRule, 
+  FilterRuleBlock, FilterRuleBlockInfo, FilterRuleInfo, FilterRuleItemType, FilterSection, FilterSectionInfo, IconColor, 
+  IconShape, IconSize, RuleStyle } from "../types/FilterTypes";
+import { IPositionableSortFn } from "../utils/helpers";
 
 export const iconSizes: IconSize[] = [
   0, 1, 2
@@ -95,138 +45,6 @@ export const dropSounds: DropSoundInfo[] = [
   {name: '25(Regal Orb)', file: 'AlertSoundShRegal'},
   {name: '25(Vaal Orb)', file: 'AlertSoundShVaal'},
 ]
-
-export type DropIcon = {
-  active: boolean,
-  size: IconSize,
-  color: IconColor,
-  shape: IconShape
-}
-
-export type DropSound = {
-  active: boolean,
-  sound: number,
-  volume: number
-  positional: boolean
-}
-
-export type DropPlayEffect = {
-  active: boolean,
-  color: IconColor,
-  temp: boolean,
-}
-
-type RuleStyle = {
-  id?: string,
-  fontSize: number,
-  textColor: Color,
-  borderColor: Color,
-  backgroundColor: Color,
-  dropSound: DropSound,
-  dropIcon: DropIcon,
-  dropPlayEffect: DropPlayEffect
-}
-
-type FilterRuleState = "Show"|"Hide"|"Disabled";
-
-enum FilterRuleItemType {
-  RULE, RULE_BLOCK
-}
-
-export enum FilterBlockRulesType {
-  RULE_MINIMAL, RULE_FULL
-}
-
-type FilterRule = {
-  type: FilterRuleItemType,
-  id: string,
-  name: string,
-  state: FilterRuleState,
-  style: RuleStyle|string,
-  items: string[],
-  imgSrc: string,
-}
-
-type FilterRuleBlock = {
-  type: FilterRuleItemType,
-  id: string,
-  name: string,
-  allowUserCreatedRules: boolean,
-  rules: FilterRule[],
-}
-
-type FilterBlock = {
-  id: string,
-  name: string,
-  imgSrc: string,
-  allowedCategories: string[],
-  rulesType: FilterBlockRulesType,
-  rules: (FilterRule|FilterRuleBlock)[];
-}
-
-type FilterSection = {
-  id: string,
-  name: string,
-  blocks: FilterBlock[],
-}
-
-export type Filter = {
-  id: string,
-  user: string|null,
-  name: string,
-  createdAt: Date,
-  modifiedAt: Date,
-  game: FilterGame
-  sections: FilterSection[]
-}
-
-interface IPositionable {
-  position: number
-}
-
-export type FilterRuleInfo = IPositionable & {
-  type: FilterRuleItemType,
-  id: string,
-  name: string,
-  state: FilterRuleState,
-  style: RuleStyle,
-  imgSrc: string,
-  items: string[],
-}
-
-export type FilterRuleBlockInfo = IPositionable & {
-  type: FilterRuleItemType,
-  id: string,
-  name: string,
-  allowUserCreatedRules: boolean,
-  rules: FilterRuleInfo[],
-}
-
-export type FilterBlockInfo = IPositionable & {
-  id: string,
-  name: string,
-  imgSrc: string,
-  allowedCategories: string[],
-  rulesType: FilterBlockRulesType,
-  rules: (FilterRuleInfo|FilterRuleBlockInfo)[]
-}
-
-export type FilterSectionInfo = IPositionable & {
-  id: string,
-  name: string,
-  blocks: FilterBlockInfo[],
-}
-
-
-export type FilterInfo = {
-  id: string,
-  user: string|null,
-  name: string,
-  createdAt: Date,
-  modifiedAt: Date,
-  game: FilterGame,
-  sections: FilterSectionInfo[],
-}
 
 @Injectable()
 export class FilterService {
@@ -653,7 +471,7 @@ export class FilterService {
       sections: []
     };
 
-    const sections = filterInfo.sections.sort(FilterService.SortFn);
+    const sections = filterInfo.sections.sort(IPositionableSortFn);
     for (let i = 0; i < sections.length; i++) {
       const s = sections[i];
       const section: FilterSection = {
@@ -661,7 +479,7 @@ export class FilterService {
         name: s.name,
         blocks: []
       }
-      const blocks = s.blocks.sort(FilterService.SortFn);
+      const blocks = s.blocks.sort(IPositionableSortFn);
       for (let j = 0; j < blocks.length; j++) {
         const b = blocks[j];
         const block: FilterBlock = {
@@ -672,7 +490,7 @@ export class FilterService {
           allowedCategories: b.allowedCategories,
           rules: []
         }
-        const rules = b.rules.sort(FilterService.SortFn);
+        const rules = b.rules.sort(IPositionableSortFn);
         for (let k = 0; k < rules.length; k++) {
           const r = rules[k];
           if (r.type === FilterRuleItemType.RULE_BLOCK) {
@@ -683,7 +501,7 @@ export class FilterService {
               allowUserCreatedRules: (r as FilterRuleBlockInfo).allowUserCreatedRules,
               rules: []
             };
-            const ruleBlockRules = (r as FilterRuleBlockInfo).rules.sort(FilterService.SortFn);
+            const ruleBlockRules = (r as FilterRuleBlockInfo).rules.sort(IPositionableSortFn);
             for (let l = 0; l < ruleBlockRules.length; l++) {
               const ru = ruleBlockRules[l];
               const rule: FilterRule = {
@@ -823,7 +641,7 @@ export class FilterService {
       }
       trgSection.blocks.push(block);
     }
-    trgSection.blocks = trgSection.blocks.sort(FilterService.SortFn);
+    trgSection.blocks = trgSection.blocks.sort(IPositionableSortFn);
   }
 
   private SetRulePosition(ruleId: string, position: number, blockId: string, ruleBlockId?: string, ) {
@@ -882,13 +700,6 @@ export class FilterService {
       }
     }
     trgRule.position = (position === trgBlock.rules.length) ? (trgBlock.rules.length - 1) : position;
-    trgBlock.rules = trgBlock.rules.sort(FilterService.SortFn);
-  }
-
-  private static SortFn(a: IPositionable, b: IPositionable) {
-    if (a.position < b.position) {
-      return -1;
-    }
-    return 1;
+    trgBlock.rules = trgBlock.rules.sort(IPositionableSortFn);
   }
 }

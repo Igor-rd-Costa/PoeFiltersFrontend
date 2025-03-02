@@ -1,12 +1,12 @@
 import { AfterViewInit, Component, effect, ElementRef, model, signal, ViewChild } from '@angular/core';
 import { FilterRuleComponent } from '../filter-rule/filter-rule.component';
-import { FilterBlockInfo, FilterBlockRulesType, FilterRuleBlockInfo, FilterRuleInfo, FilterService } from '../../../../../services/FilterService';
-import { ItemCategory, ItemService } from '../../../../../services/ItemService';
+import { FilterService } from '../../../../../services/FilterService';
 import { GetHTMLContentHeight } from '../../../../../utils/helpers';
 import { AuthService } from '../../../../../services/AuthService';
 import { FilterRuleBlockComponent } from "../filter-rule-block/filter-rule-block.component";
 import { ItemCategoryService } from '../../../../../services/ItemCategoryService';
 import { BlockSettingsFormComponent } from "./block-settings-form/block-settings-form.component";
+import { FilterBlockInfo, FilterBlockRulesType, FilterRuleBlockInfo, FilterRuleInfo } from '../../../../../types/FilterTypes';
 
 @Component({
   selector: 'app-filter-block',

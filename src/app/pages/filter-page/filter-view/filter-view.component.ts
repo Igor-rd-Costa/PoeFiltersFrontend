@@ -1,11 +1,12 @@
 import { AfterViewInit, Component, effect, ViewChild } from '@angular/core';
-import { FilterSectionInfo, FilterService } from '../../../services/FilterService';
+import { FilterService } from '../../../services/FilterService';
 import { ColorPickerMenuComponent } from "./components/color-picker/color-picker.component";
 import { IconOptionsMenuComponent } from "./components/icon-options-menu/icon-options-menu.component";
 import { SoundMenuComponent } from "./components/sound-menu/sound-menu.component";
 import { PlayEffectMenuComponent } from "./components/play-effect-menu/play-effect-menu.component";
 import { FilterSectionComponent } from './components/filter-section/filter-section.component';
 import { AuthService } from '../../../services/AuthService';
+import { FilterSectionInfo } from '../../../types/FilterTypes';
 
 
 @Component({

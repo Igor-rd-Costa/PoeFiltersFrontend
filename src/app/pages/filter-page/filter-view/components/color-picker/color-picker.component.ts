@@ -1,7 +1,7 @@
-import { Component, computed, effect, ElementRef, Input, ModelSignal, signal, ViewChild } from '@angular/core';
-import { Color, ColorHSV, ColorHSVA, ColorRGBA } from '../../../../../services/FilterService';
+import { Component, computed, ElementRef, ModelSignal, signal, ViewChild } from '@angular/core';
 import { Observable, Subscriber } from 'rxjs';
 import { RGBToHSV } from '../../../../../utils/helpers';
+import { Color, ColorHSVA, ColorRGBA } from '../../../../../types/FilterTypes';
 
 @Component({
   selector: 'app-color-picker-menu',
