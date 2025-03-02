@@ -1,0 +1,32 @@
+<h3 class="text-[1.2rem]">Rule Settings</h3>
+<form id="filter-rule-wrapper-edit-form" class="text-[1rem] grid grid-cols-[auto_1fr] grid-rows-[1fr_auto] gap-4" [formGroup]="settingsForm"
+(submit)="SaveRuleBlockInfo($event)">
+  <div class="grid gap-2">
+    <div>
+      <label class="text-[0.9rem] font-mono">Name</label>
+      <br>
+      <input id="filter-rule-wrapper-edit-form-name-input" class="pl-2 rounded-md outline-none" type="text" [formControl]="settingsForm.controls.name">
+    </div>
+      
+    <div>
+      <label class="text-[0.9rem] font-mono">Rules Type</label>
+      <br>
+      <select id="filter-block-wrapper-edit-form-rules-type-input" class="pl-2 h-[1.8rem] rounded-md outline-none" [formControl]="settingsForm.controls.rulesType">
+        <option [value]="FilterRuleType.RULE_MINIMAL">Minimal</option>
+        <option [value]="FilterRuleType.RULE_FULL">Full</option>
+      </select>
+    </div>
+    
+    <div class="flex gap-x-2 items-center">
+      <input type="checkbox" [formControl]="settingsForm.controls.allowUserCreatedRules"/>
+      <label class="text-[0.9rem] font-mono">Allow user created rules</label>
+    </div>
+  </div>
+  <div class="flex flex-col">
+  </div>
+  <div class="flex row-start-2 col-start-1 col-end-3 gap-x-2 items-end justify-end">
+    <button class="bg-dark enabled:hover:bg-darkBright shadow-card text-main p-1 pl-2 pr-2 rounded-md 
+    disabled:bg-[#0A0A0AFF] disabled:text-[#AAAF]" [disabled]="!settingsForm.valid">Save</button>
+    <button type="button" class="bg-dark hover:bg-darkBright shadow-card text-main p-1 pl-2 pr-2 rounded-md" (click)="CancelEdit()">Cancel</button>
+  </div>
+</form>

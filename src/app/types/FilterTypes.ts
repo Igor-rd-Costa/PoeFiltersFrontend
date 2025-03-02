@@ -81,7 +81,7 @@ export enum FilterRuleItemType {
   RULE, RULE_BLOCK
 }
 
-export enum FilterBlockRulesType {
+export enum FilterRuleType {
   RULE_MINIMAL, RULE_FULL
 }
 
@@ -115,7 +115,7 @@ interface FilterBlockBase {
   name: string,
   imgSrc: string,
   allowedCategories: string[],
-  rulesType: FilterBlockRulesType,
+  rulesType: FilterRuleType,
 }
 
 interface FilterRuleBlockBase {
@@ -123,6 +123,7 @@ interface FilterRuleBlockBase {
   name: string,
   type: FilterRuleItemType,
   allowUserCreatedRules: boolean,
+  rulesType: FilterRuleType
 }
 
 interface FilterRuleBase {

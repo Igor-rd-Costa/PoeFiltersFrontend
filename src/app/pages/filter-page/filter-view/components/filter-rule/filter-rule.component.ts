@@ -9,7 +9,7 @@ import { ItemService, Item, ItemCategory } from '../../../../../services/ItemSer
 import { BaseTypeInputComponent } from './base-type-input/base-type-input.component';
 import { FontSizeInputComponent } from "./font-size-input/font-size-input.component";
 import { RuleSettingsFormComponent } from "./rule-settings-form/rule-settings-form.component";
-import { Color, ColorRGBA, FilterBlockRulesType, FilterRuleInfo, RuleStyle } from '../../../../../types/FilterTypes';
+import { Color, ColorRGBA, FilterRuleType, FilterRuleInfo, RuleStyle } from '../../../../../types/FilterTypes';
 
 @Component({
   selector: 'app-filter-rule',
@@ -20,7 +20,7 @@ import { Color, ColorRGBA, FilterBlockRulesType, FilterRuleInfo, RuleStyle } fro
 export class FilterRuleComponent implements AfterViewInit {
   @ViewChild("wrapper") wrapper!: ElementRef<HTMLElement>;
   @Input({required: true}) itemCategories: string[] = [];
-  @Input({required: true}) ruleType: FilterBlockRulesType = FilterBlockRulesType.RULE_FULL;
+  @Input({required: true}) ruleType: FilterRuleType = FilterRuleType.RULE_FULL;
   rule = model.required<FilterRuleInfo>();
   ruleStyle = computed(() => {
     const r = this.rule();

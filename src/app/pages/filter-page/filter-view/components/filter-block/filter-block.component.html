@@ -32,7 +32,7 @@
           </div>
         } @else {
           <div class="w-full">
-            <app-filter-rule-block [blockId]="block().id" [itemCategories]="block().allowedCategories" [rulesType]="block().rulesType" [ruleBlock]="CastToRuleBlock(rule)"/>
+            <app-filter-rule-block [blockId]="block().id" [itemCategories]="block().allowedCategories" [ruleBlock]="CastToRuleBlock(rule)"/>
             <div id="filter-rule-drag-target" [attr.data-block]="block().id" class="w-full grid justify-items-center pt-3 pb-3 h-fit" 
             [attr.data-dragPosition]="$index + 1" (dragover)="OnDragOver($event)" (dragleave)="OnMouseLeave($event)">
             <div class="w-[90%] h-[1px] pointer-events-none"></div>

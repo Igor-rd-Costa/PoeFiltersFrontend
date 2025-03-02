@@ -6,7 +6,7 @@ import { AuthService } from '../../../../../services/AuthService';
 import { FilterRuleBlockComponent } from "../filter-rule-block/filter-rule-block.component";
 import { ItemCategoryService } from '../../../../../services/ItemCategoryService';
 import { BlockSettingsFormComponent } from "./block-settings-form/block-settings-form.component";
-import { FilterBlockInfo, FilterBlockRulesType, FilterRuleBlockInfo, FilterRuleInfo } from '../../../../../types/FilterTypes';
+import { FilterBlockInfo, FilterRuleBlockInfo, FilterRuleInfo } from '../../../../../types/FilterTypes';
 
 @Component({
   selector: 'app-filter-block',
@@ -30,16 +30,10 @@ import { FilterBlockInfo, FilterBlockRulesType, FilterRuleBlockInfo, FilterRuleI
 export class FilterBlockComponent implements AfterViewInit {
   @ViewChild('wrapper') wrapper!: ElementRef<HTMLElement>;
   block = model.required<FilterBlockInfo>();
-  FilterBlockRulesType = FilterBlockRulesType;
   protected isExpanded = signal<boolean>(false);
   protected isInEditMode = signal<boolean>(false);
 
-  constructor(private filterService: FilterService, private itemCategoryService: ItemCategoryService, protected authService: AuthService) {
-    effect(() => {
-      if (this.isInEditMode()) {
-      }
-    })
-  }
+  constructor(private filterService: FilterService, private itemCategoryService: ItemCategoryService, protected authService: AuthService) {}
 
   ngAfterViewInit(): void {
     if (this.isExpanded()) {

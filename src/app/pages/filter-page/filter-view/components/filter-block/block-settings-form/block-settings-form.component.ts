@@ -2,7 +2,7 @@ import { AfterViewInit, Component, EventEmitter, model, Output } from '@angular/
 import { ItemCategoryService } from '../../../../../../services/ItemCategoryService';
 import { ItemCategory } from '../../../../../../services/ItemService';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FilterBlockInfo, FilterBlockRulesType } from '../../../../../../types/FilterTypes';
+import { FilterBlockInfo, FilterRuleType } from '../../../../../../types/FilterTypes';
 
 @Component({
   selector: 'app-block-settings-form',
@@ -12,11 +12,11 @@ import { FilterBlockInfo, FilterBlockRulesType } from '../../../../../../types/F
 })
 export class BlockSettingsFormComponent implements AfterViewInit {
   block = model.required<FilterBlockInfo>();
-  FilterBlockRulesType = FilterBlockRulesType;
+  FilterRuleType = FilterRuleType;
   settingsForm = new FormGroup({
     name: new FormControl('', {validators: [Validators.required]}),
     imgUrl: new FormControl(''),
-    rulesType: new FormControl<FilterBlockRulesType>(FilterBlockRulesType.RULE_FULL, {validators: [Validators.required]}),
+    rulesType: new FormControl<FilterRuleType>(FilterRuleType.RULE_FULL, {validators: [Validators.required]}),
     allowedCategories: new FormControl<string[]>([])
   });
   @Output('close') close = new EventEmitter();

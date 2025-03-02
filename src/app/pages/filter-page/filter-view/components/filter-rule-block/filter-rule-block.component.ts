@@ -2,12 +2,13 @@ import { Component, ElementRef, Input, model, signal, ViewChild } from '@angular
 import { FilterService } from '../../../../../services/FilterService';
 import { GetHTMLContentHeight } from '../../../../../utils/helpers';
 import { FilterRuleComponent } from '../filter-rule/filter-rule.component';
-import { FilterBlockRulesType, FilterRuleBlockInfo } from '../../../../../types/FilterTypes';
+import { FilterRuleBlockInfo, FilterRuleType } from '../../../../../types/FilterTypes';
+import { RuleBlockSettingsFormComponent } from "./rule-block-settings-form/rule-block-settings-form.component";
 
 @Component({
   selector: 'app-filter-rule-block',
   standalone: true,
-  imports: [FilterRuleComponent],
+  imports: [FilterRuleComponent, RuleBlockSettingsFormComponent],
   templateUrl: './filter-rule-block.component.html',
   styles: `
     :host {
@@ -27,7 +28,6 @@ export class FilterRuleBlockComponent {
   @ViewChild('wrapper') wrapper!: ElementRef<HTMLElement>;
   @Input() itemCategories: string[] = [];
   @Input({required: true}) blockId: string = "";
-  @Input({required: true}) rulesType: FilterBlockRulesType = FilterBlockRulesType.RULE_FULL;
   ruleBlock = model.required<FilterRuleBlockInfo>();
   protected isExpanded = signal<boolean>(false);
   protected isInEditMode = signal<boolean>(false);
@@ -96,20 +96,7 @@ export class FilterRuleBlockComponent {
     this.filterService.CreateRule(this.blockId, this.ruleBlock().id);
   }
 
-  SaveRuleBlockInfo(event: SubmitEvent) {
-    event.preventDefault();
-    const form = this.wrapper.nativeElement.querySelector("#filter-rule-wrapper-edit-form") as HTMLElement|null;
-    if (!form) {
-      return;
-    }
-    const nameInput = form.querySelector("#filter-rule-wrapper-edit-form-name-input") as HTMLInputElement|null;
-    const nameValue = nameInput?.value ?? this.ruleBlock().name;
-
-    this.ruleBlock().name = nameValue;
-    this.isInEditMode.set(false);
-  }
-
-  CancelEdit(event: MouseEvent) {
+  OnSettingsClose() {
     this.isInEditMode.set(false);
   }
 }

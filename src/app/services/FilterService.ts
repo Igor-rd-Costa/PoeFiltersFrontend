@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable, signal } from "@angular/core";
 import { AppComponent } from "../app.component";
 import { v4 } from 'uuid'
-import { DropSoundInfo, Filter, FilterBlock, FilterBlockInfo, FilterBlockRulesType, FilterInfo, FilterRule, 
+import { DropSoundInfo, Filter, FilterBlock, FilterBlockInfo, FilterRuleType, FilterInfo, FilterRule, 
   FilterRuleBlock, FilterRuleBlockInfo, FilterRuleInfo, FilterRuleItemType, FilterSection, FilterSectionInfo, IconColor, 
   IconShape, IconSize, RuleStyle } from "../types/FilterTypes";
 import { IPositionableSortFn } from "../utils/helpers";
@@ -87,20 +87,15 @@ export class FilterService {
 
   LoadFilter(id: string) {
     return new Promise<boolean>(resolve => {
-      this.http.get<Filter|null>(this.backend + id + "/", {withCredentials: true}).subscribe({
+      this.http.get<Filter>(this.backend + id + "/", {withCredentials: true}).subscribe({
         next: filter => {
-          if (filter === null) {
-            sessionStorage.removeItem("filter");
-            this.filter.set(null);
-            resolve(false);
-            return;
-          }
           const filterInfo = this.FilterToFilterInfo(filter);
           sessionStorage.setItem("filter", JSON.stringify(filterInfo));
           this.filter.set(filterInfo);
           resolve(true);
         },
         error: err => {
+          sessionStorage.removeItem("filter");
           this.filter.set(null);
           console.error(err);
           resolve(false);
@@ -250,7 +245,7 @@ export class FilterService {
           imgSrc: "",
           position: section.blocks.length,
           allowedCategories: [],
-          rulesType: FilterBlockRulesType.RULE_FULL,
+          rulesType: FilterRuleType.RULE_FULL,
           rules: []
         };
         section.blocks.push(block);
@@ -340,9 +335,10 @@ export class FilterService {
       return;
     }
     const ruleBlock: FilterRuleBlockInfo = {
-      type: FilterRuleItemType.RULE_BLOCK,
       id: v4(),
       name: "Unnamed RuleBlock",
+      type: FilterRuleItemType.RULE_BLOCK,
+      rulesType: block.rulesType,
       allowUserCreatedRules: false,
       rules: [],
       position: block.rules.length
@@ -422,7 +418,7 @@ export class FilterService {
       for (let j = 0; j < s.blocks.length; j++) {
         const b = s.blocks[j];
         if (b.rulesType === undefined) {
-          b.rulesType = FilterBlockRulesType.RULE_FULL;
+          b.rulesType = FilterRuleType.RULE_FULL;
         }
         const block: FilterBlockInfo = {
           id: b.id,
@@ -435,22 +431,44 @@ export class FilterService {
         };
         for (let k = 0; k < b.rules.length; k++) {
           if (b.rules[k].type !== FilterRuleItemType.RULE_BLOCK) {
-            const r = b.rules[k] as FilterRuleInfo;
-            const ruleStyle = (typeof r.style === 'string') ? this.GetRuleStyle(r.style) : r.style;
-            if (!ruleStyle.fontSize) {
-              ruleStyle.fontSize = 32;
-            }
+            const r = b.rules[k] as FilterRule;
             const rule: FilterRuleInfo = {
               type: FilterRuleItemType.RULE,
               id: r.id,
               name: r.name,
               imgSrc: r.imgSrc,
               state: r.state,
-              style: ruleStyle,
+              style: r.style,
               items: [...r.items],
               position: k,
             }
             block.rules.push(rule);
+          } else {
+            const rb = b.rules[k] as FilterRuleBlock;
+            const ruleBlock: FilterRuleBlockInfo = {
+              id: rb.id,
+              name: rb.name,
+              type: FilterRuleItemType.RULE_BLOCK,
+              allowUserCreatedRules: rb.allowUserCreatedRules,
+              rulesType: rb.rulesType,
+              rules: [],
+              position: k
+            }
+            for (let l = 0; l < rb.rules.length; l++) {
+              const r = rb.rules[l];
+              const rule: FilterRuleInfo = {
+                type: FilterRuleItemType.RULE,
+                id: r.id,
+                name: r.name,
+                imgSrc: r.imgSrc,
+                state: r.state,
+                style: r.style,
+                items: [...r.items],
+                position: l,
+              }
+              ruleBlock.rules.push(rule);
+            }
+            block.rules.push(ruleBlock);
           }
         }
         section.blocks.push(block);
@@ -498,6 +516,7 @@ export class FilterService {
               id: r.id,
               name: r.name,
               type: FilterRuleItemType.RULE_BLOCK,
+              rulesType: (r as FilterRuleBlockInfo).rulesType,
               allowUserCreatedRules: (r as FilterRuleBlockInfo).allowUserCreatedRules,
               rules: []
             };
