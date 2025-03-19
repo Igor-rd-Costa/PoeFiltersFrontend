@@ -1,0 +1,29 @@
+<div class="w-full h-full grid grid-rows-[auto_1fr_auto]">
+  <h2 class="text-[1.8rem] pt-4 pb-4 text-main flex justify-center">Filter Structure</h2>
+  <div class="overflow-scroll w-full h-fit grid gap-y-8">
+    @if (filterStructure()) {
+      @for (section of filterStructure()!.sections; track section.id) {
+        <app-filter-section-structure [section]="section" (delete)="OnSectionDelete($event)"/>
+      }
+
+      <div class="border-t border-[#555F] pt-2 w-full">
+        <div class="h-[4.5rem] bg-main w-full rounded-md cursor-pointer flex justify-center items-center hover:bg-mainBright" (click)="CreateSection()">
+          <h3 class="text-[1.8rem] text-dark select-none cursor-pointer">
+            Create Section
+          </h3>
+        </div>
+      </div>
+    }
+  </div>
+  <div class="w-full h-fit flex relative left-1/4 items-center">
+    @if (filterStructure()) {
+      <button type="button" class="bg-dark enabled:hover:bg-darkBright shadow-card text-main p-1 pl-2 pr-2 
+      rounded-md disabled:bg-[#0A0A0AFF] disabled:text-[#AAAF]" [disabled]="filterStructure()!.sections.length === 0" (click)="SaveStructure($event)">Save</button>
+
+      <button type="button" class="bg-dark enabled:hover:bg-darkBright shadow-card text-main p-1 pl-2 pr-2 
+      rounded-md disabled:bg-[#0A0A0AFF] disabled:text-[#AAAF]" (click)="ResetStructure($event)">Reset</button>
+      <button type="button" class="bg-dark enabled:hover:bg-darkBright shadow-card text-main p-1 pl-2 pr-2 
+      rounded-md disabled:bg-[#0A0A0AFF] disabled:text-[#AAAF]" (click)="TestStructure($event)">Test</button>
+    }
+  </div>
+</div>

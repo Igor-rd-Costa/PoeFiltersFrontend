@@ -1,4 +1,5 @@
-import { ColorHSV, ColorRGB, IPositionable } from "../types/FilterTypes";
+import { ColorHSV, ColorRGB } from "../types/FilterTypes";
+import { IPositionable } from "../types/FilterBaseTypes";
 
 export function GetHTMLContentHeight(element: HTMLElement) {
   let height = 0;

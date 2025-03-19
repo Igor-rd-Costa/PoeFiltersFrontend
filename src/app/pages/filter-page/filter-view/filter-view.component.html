@@ -1,7 +1,7 @@
 <div class="w-full h-full grid justify-items-center overflow-y-scroll">
-  <div [style]="{gridTemplateRows: 'repeat('+(sections.length + 1)+', auto)'}" class="w-full h-fit pr-2 pl-2 gap-y-8 grid">
-    @for (section of sections; track section.id) {
-      <app-filter-section [section]="section"/>
+  <div [style]="{gridTemplateRows: 'repeat('+(sections().length + 1)+', auto)'}" class="w-full h-fit pr-2 pl-2 gap-y-8 grid">
+    @for (section of sections(); track section.id) {
+      <app-filter-section [section]="section" [editable]="true"/>
     }
     @if (authService.IsAdmin()) {
       <div class="border-t border-[#555F] pt-2 w-full">

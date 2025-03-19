@@ -1,0 +1,47 @@
+<app-large-expandable-header>
+  <div class="flex h-full w-full items-center gap-x-2" draggable="true" heading>
+    <img [src]="block().imgSrc" class="w-[3.5rem] h-[3.5rem] rounded-md" draggable="false"> 
+    <p draggable="false">{{block().name}}</p>
+      <span class="material-symbols-outlined text-[1.8rem] hover:text-[#333F]" draggable="false" (click)="Edit($event)">
+        edit
+      </span>
+      <span class="material-symbols-outlined text-[1.8rem] hover:text-[#333F]" draggable="false" (click)="Delete($event)">
+        delete
+      </span>
+  </div>
+  <div content>
+    @if (!isInEditMode()) {
+      <div id="filter-rule-drag-target" [attr.data-block]="block().id" class="w-full grid justify-items-center pt-3 pb-3 h-fit" 
+      [attr.data-dragPosition]="0">
+        <div class="w-[90%] h-[1px] pointer-events-none"></div>
+      </div>
+      @for (rule of block().rules; track rule.id) {
+        <div class="w-full">
+            @if (rule.type === FilterRuleItemType.RULE) {
+              <app-filter-rule-structure [rule]="CastToRule(rule)" (delete)="OnRuleDelete($event)"/>
+            } @else {
+              <app-filter-rule-block-structure [blockId]="block().id" [ruleBlock]="CastToRuleBlock(rule)" (delete)="OnRuleDelete($event)"/>
+            }
+            <div id="filter-rule-drag-target" [attr.data-block]="block().id" class="w-full grid justify-items-center pt-3 pb-3 h-fit" 
+            [attr.data-dragPosition]="$index + 1">
+              <div class="w-[90%] h-[1px] pointer-events-none"></div>
+            </div>
+        </div>
+      }
+      <div class="flex gap-x-4">
+        <div id="filter-rule-heading" class="h-[3rem] mb-[calc(1.5rem+1px)] text-[1.5rem] text-dark bg-main w-full rounded-md flex items-center justify-center 
+        pl-4 hover:bg-mainBright cursor-pointer" (click)="CreateRule()">
+          Create Rule
+        </div>
+        <div id="filter-rule-heading" class="h-[3rem] mb-[calc(1.5rem+1px)] text-[1.5rem] text-dark bg-main w-full rounded-md flex items-center justify-center 
+        pl-4 hover:bg-mainBright cursor-pointer" (click)="CreateRuleBlock()">
+          Create RuleBlock
+        </div>
+    </div>
+    } @else {
+      <div class="p-4 border border-t-0 border-b-0 bg-[#222F] border-main">
+        <app-block-settings-form [block]="block()" (close)="OnSettingsClose()"/>
+      </div>
+    }
+  </div>
+</app-large-expandable-header>

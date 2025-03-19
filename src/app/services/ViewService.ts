@@ -1,9 +1,9 @@
 import { Injectable, signal } from "@angular/core";
 
 export enum AppView {
-  USER_ADMIN,
-  FILTER_LOAD, FILTER_STYLES, FILTER_EXPORT, 
-  FILTER_VIEW,
+  ADMIN_ITEMS, ADMIN_FILTER_STRUCTURE, ADMIN_DEFAULT_FILTERS,
+  USER_STYLES, USER_FILTERS,
+  FILTER_VIEW, FILTER_EXPORT,
 }
 
 @Injectable()

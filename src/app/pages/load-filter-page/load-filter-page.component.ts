@@ -1,23 +1,33 @@
-import { AfterViewInit, Component, effect, ElementRef, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, effect, ElementRef, QueryList, signal, ViewChild, ViewChildren } from '@angular/core';
 import { FilterService } from '../../services/FilterService';
 import { AppView, ViewService } from '../../services/ViewService';
-import { GetHTMLContentHeight } from '../../utils/helpers';
+import { GetHTMLContentHeight } from '../../utils/Helpers';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/AuthService';
-import { FilterData } from '../../types/FilterTypes';
+import { FilterData, FilterStrictness } from '../../types/FilterTypes';
 
 @Component({
   selector: 'app-load-filter-page',
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './load-filter-page.component.html',
+  styles: `
+    .selected {
+      @apply border-mainBright;
+      @apply text-mainBright;
+    }
+  `
 })
 export class LoadFilterPageComponent implements AfterViewInit {
+  FilterStrictness = FilterStrictness;
   @ViewChild("createWrapper") createWrapper!: ElementRef<HTMLElement>;
+  @ViewChildren("filterStrictness") strictnessElements!: QueryList<ElementRef<HTMLElement>>;
   protected isCreateFilterVisible = signal<boolean>(false);
   protected createFilterForm = new FormGroup({
-    name: new FormControl("", [Validators.required])
+    name: new FormControl("", [Validators.required]),
+    strictness: new FormControl<FilterStrictness>(FilterStrictness.REGULAR)
   });
+  private filterStrictnessElement: HTMLElement|null = null
   protected filters: FilterData[] = [];
 
   constructor(private filterService: FilterService, private viewService: ViewService, protected authService: AuthService) {
@@ -32,7 +42,38 @@ export class LoadFilterPageComponent implements AfterViewInit {
   }
   
   async ngAfterViewInit() {
-    
+    this.strictnessElements.changes.subscribe(_ => {
+      if (this.filterStrictnessElement === null && this.strictnessElements.first) {
+        this.filterStrictnessElement = this.strictnessElements.first.nativeElement;
+        this.filterStrictnessElement.classList.add("selected");
+        const strictnessStr = this.filterStrictnessElement.getAttribute("strictness");
+        if (strictnessStr !== null) {
+          this.createFilterForm.controls.strictness.setValue(parseInt(strictnessStr));
+        }
+      }
+    });
+  }
+
+  SelectStrictness(event: MouseEvent) {
+    if (event.target === null) {
+      return;
+    }
+    event.stopPropagation();
+    const t = event.target as HTMLElement;
+    const strictnessStr =  t.getAttribute("strictness");
+    if (strictnessStr === null) {
+      return;
+    }
+    const strictness = parseInt(strictnessStr) as FilterStrictness;
+    if (t === this.filterStrictnessElement) {
+      return;
+    }
+    this.createFilterForm.controls.strictness.setValue(strictness);
+    if (this.filterStrictnessElement !== null) {
+      this.filterStrictnessElement.classList.remove('selected');
+    }
+    this.filterStrictnessElement = t;
+    this.filterStrictnessElement.classList.add("selected");
   }
 
   GetTimeDif(date: Date) {
@@ -111,7 +152,7 @@ export class LoadFilterPageComponent implements AfterViewInit {
     if (!this.createFilterForm.valid || !this.authService.IsLogged()) {
       return;
     }
-    if (await this.filterService.CreateFilter(this.createFilterForm.controls.name.value!)) {
+    if (await this.filterService.CreateFilter(this.createFilterForm.controls.name.value!, this.createFilterForm.controls.strictness.value!)) {
       this.viewService.SetView(AppView.FILTER_VIEW);
     }
   }

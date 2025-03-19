@@ -1,0 +1,16 @@
+<div class="relative" #wrapper>
+  <div class="h-[3rem] bg-main w-full rounded-md flex items-center 
+  pl-4 hover:bg-mainBright cursor-pointer" (click)="ToggleExpand()" draggable="true">
+    <h3 class="grid grid-cols-[1fr_auto] items-center gap-x-2 text-[1.1rem] text-dark w-full pr-4" draggable="false">
+      <div>
+        <ng-content select="[heading]"/>
+      </div>
+      <span [style]="{rotate: isExpanded() ? '90deg' : '0deg'}" class="material-symbols-outlined justify-self-end" draggable="false" #expandIcon>
+        chevron_right
+      </span>
+    </h3>
+  </div>
+  <div [style]="{height: isExpanded() ? 'fit-content' : '0px'}" class="overflow-hidden" #content>
+    <ng-content select="[content]"/>
+  </div>
+</div>

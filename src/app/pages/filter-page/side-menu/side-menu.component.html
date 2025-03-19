@@ -1,24 +1,30 @@
 <section class="h-screen w-[15rem] bg-dark grid grid-rows-[auto_auto_auto_1fr] justify-items-center gap-y-[2rem]">
   <h1 class="text-[1.5rem] mt-4 text-main">PoE Filters</h1>
-  <app-filter-select/>
+  <!-- <app-filter-select/> -->
   <nav class="w-full grid gap-y-[2rem] justify-items-center">
-    <app-menu-section heading="User">
-      <app-menu-item [view]="AppView.USER_ADMIN" imgSrc="" content="Admin" (click)="SwitchView(AppView.USER_ADMIN)"/>
-    </app-menu-section>
-    <app-menu-section heading="Filter">
-      <app-menu-item [view]="AppView.FILTER_STYLES" imgSrc="" content="Styles" (click)="SwitchView(AppView.FILTER_STYLES)"/>
-      <app-menu-item [view]="AppView.FILTER_EXPORT" imgSrc="" content="Export" (click)="SwitchView(AppView.FILTER_EXPORT)"/>
-    </app-menu-section>
-    @if (filter) {
-      @for (section of filter.sections; track section.id) {
+    @if (isAdmin()) {
+      <app-menu-section heading="Admin">
+        <app-menu-item [view]="AppView.ADMIN_ITEMS" imgSrc="" content="Items" (click)="SwitchView(AppView.ADMIN_ITEMS)"/>
+        <app-menu-item [view]="AppView.ADMIN_FILTER_STRUCTURE" imgSrc="" content="Filter Structure" (click)="SwitchView(AppView.ADMIN_FILTER_STRUCTURE)"/>
+        <app-menu-item [view]="AppView.ADMIN_DEFAULT_FILTERS" imgSrc="" content="Default Filters" (click)="SwitchView(AppView.ADMIN_DEFAULT_FILTERS)"/>
+      </app-menu-section>
+    }
+    @if (user() !== null) {
+      <app-menu-section heading="User">
+        <app-menu-item [view]="AppView.USER_FILTERS" imgSrc="" content="Filters" (click)="SwitchView(AppView.USER_FILTERS)"/>
+        <app-menu-item [view]="AppView.USER_STYLES" imgSrc="" content="Styles" (click)="SwitchView(AppView.USER_STYLES)"/>
+      </app-menu-section>
+    }
+    @if (filter()) {
+      <app-menu-section heading="Filter">
+        <app-menu-item [view]="AppView.FILTER_EXPORT" imgSrc="" content="Export" (click)="SwitchView(AppView.FILTER_EXPORT)"/>
+      </app-menu-section>
+      @for (section of filter()!.sections; track section.id) {
         <app-menu-section [heading]="section.name">
           @for (block of section.blocks; track block.id) {
-            <app-menu-item [imgSrc]="block.imgSrc" [content]="block.name" (click)="SwitchView(AppView.FILTER_VIEW, block.id)"/>
+            <app-menu-item [view]="AppView.FILTER_VIEW" [imgSrc]="block.imgSrc" [content]="block.name" (click)="SwitchView(AppView.FILTER_VIEW, block.id)"/>
           }
         </app-menu-section>
-      }
-      @if (filter.sections.length === 0) {
-        <app-menu-item content="Filter" (click)="SwitchView(AppView.FILTER_VIEW)"/>
       }
     }
   </nav>

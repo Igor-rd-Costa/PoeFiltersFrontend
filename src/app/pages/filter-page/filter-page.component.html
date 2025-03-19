@@ -1,23 +1,32 @@
-@if (viewService.View() === AppView.FILTER_LOAD) {
-  <app-load-filter-page/>
-} @else {
-  <div class="grid grid-cols-[15rem_calc(100vw-15rem)] h-[100vh] w-[100vw] overflow-hidden">
-    <app-side-menu/>
-    @switch (viewService.View()) {
-      @case (AppView.USER_ADMIN) {
-        <app-user-admin-view/>
-      }
-      @case (AppView.FILTER_STYLES) {
-        
-      }
-      @case (AppView.FILTER_EXPORT) {
-        <app-filter-export-view/>
-      }
-      @default {
-        <div class="w-full h-screen p-8">
-          <app-filter-view/>
-        </div>
-      }
+<div class="grid grid-cols-[15rem_calc(100vw-15rem)] h-[100vh] w-[100vw] overflow-hidden">
+  <app-side-menu/>
+  @switch (viewService.View()) {
+    @case (AppView.ADMIN_ITEMS) {
+      <app-user-admin-view/>
     }
-  </div>
-}
+    @case (AppView.ADMIN_FILTER_STRUCTURE) {
+      <div class="w-full h-screen p-8">
+        <app-filter-structure-view/>
+      </div>
+    }
+    @case (AppView.ADMIN_DEFAULT_FILTERS) {
+      <div class="w-full h-screen p-8">
+        <app-default-filters-view/>
+      </div>
+    }
+    @case (AppView.USER_FILTERS) {
+      <app-load-filter-page/>
+    }
+    @case (AppView.USER_STYLES) {
+      
+    }
+    @case (AppView.FILTER_VIEW) {
+      <div class="w-full h-screen p-8">
+        <app-filter-view/>
+      </div>
+    }
+    @case (AppView.FILTER_EXPORT) {
+      <app-filter-export-view/>
+    }
+  }
+</div>

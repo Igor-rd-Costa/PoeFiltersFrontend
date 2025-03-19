@@ -1,0 +1,28 @@
+<div class="w-full h-full grid gap-4 grid-rows-[auto_auto_1fr_auto] font-mono">
+  <h2 class="text-[1.8rem] pt-4 text-main flex justify-center">Default Filter</h2>
+  <div class="w-full h-5rem grid items-center justify-center">
+    <h3 class="text-[1.3rem] text-main flex justify-center">
+      Strictness
+    </h3>
+
+    <div class="w-full flex mt-2 items-center justify-center">
+
+      <div class="border rounded-md border-main mt-2 bg-[#1A1A1AFF] text-main w-[6rem] h-[3.5rem] flex justify-center items-center text-[1.2rem]
+        shadow-card uppercase cursor-pointer hover:border-mainBright hover:text-mainBright" (click)="SelectStrictness($event, FilterStrictness.REGULAR)">
+        Regular
+      </div>
+
+    </div>
+  </div>
+  <div class="overflow-scroll w-full h-fit grid gap-y-8">
+    @if (defaultFilter()) {
+      @for (section of defaultFilter()!.sections; track section.id) {
+        <app-filter-section [section]="section"/>
+      }
+    }
+  </div>
+  <div class="w-full h-fit flex relative left-1/4 items-center">
+      <button type="button" class="bg-dark enabled:hover:bg-darkBright shadow-card text-main p-1 pl-2 pr-2 
+      rounded-md disabled:bg-[#0A0A0AFF] disabled:text-[#AAAF]" [disabled]="defaultFilter() === null" (click)="SaveDefaultFilter()">Save</button>
+  </div>
+</div>

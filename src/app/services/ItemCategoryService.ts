@@ -92,7 +92,7 @@ export class ItemCategoryService {
 
   AddItemCategory(categoryName: string) {
     return new Promise<void>(resolve => {
-      this.http.post<string>(this.backend+"custom", {categoryName}, {withCredentials: true}).subscribe({
+      this.http.post<string>(this.backend+"custom", {categoryName}, {withCredentials: true, responseType: 'text' as 'json'}).subscribe({
         next: id => {
           const categories = this.ItemCategories();
           categories.push({id: id, name: categoryName});

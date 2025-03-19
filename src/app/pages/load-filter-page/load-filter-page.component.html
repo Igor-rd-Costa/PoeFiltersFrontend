@@ -5,14 +5,24 @@
       Load Filter
     </h2>
     @if (authService.IsLogged()) {
-      <li [style]="{height: '6rem'}" class="relative p-2 pl-4 pr-4 m-2 rounded-md bg-gradient-to-br from-[#333F] to-[#222F] text-[4rem] text-main 
-      list-none cursor-pointer hover:from-[#3A3A3AFF] hover:to-[#2A2A2AFF] shadow-card" (click)="ShowCreateFilterForm()" #createWrapper>
-        <span id="filter-create-icon" class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">+</span>
-        <form id="filter-create-form" [style]="{display: 'none', opacity: 0}" class="text-[1rem] grid gap-y-2" [formGroup]="createFilterForm" (submit)="CreateFilter($event)">
-          <h3 class="text-[1.3rem] mb-2">Create Filter</h3>
-          <div class="flex gap-x-2">
-            <label>Name</label>
-            <input class="rounded-md outline-none pl-2 text-black" [formControl]="createFilterForm.controls.name">
+      <li class="relative p-2 pl-4 pr-4 m-2 rounded-md bg-gradient-to-br from-[#333F] to-[#222F] text-[4rem] text-main 
+      list-none hover:from-[#3A3A3AFF] hover:to-[#2A2A2AFF] shadow-card" #createWrapper>
+        <form id="filter-create-form" class="text-[1rem] grid gap-y-2" [formGroup]="createFilterForm" (submit)="CreateFilter($event)">
+          <h3 class="text-[1.3rem] flex justify-center mb-2">Create Filter</h3>
+          <div class="flex gap-2 justify-center">
+            <div class="border rounded-md border-main  bg-[#1A1A1AFF] text-main w-[96px] h-[42px] flex justify-center items-center text-[1rem]
+            shadow-card uppercase cursor-pointer hover:border-mainBright hover:text-mainBright" [attr.strictness]="FilterStrictness.REGULAR" (click)="SelectStrictness($event)" #filterStrictness>
+              Regular
+            </div>
+
+            <div class="border rounded-md border-main  bg-[#1A1A1AFF] text-main w-[96px] h-[42px] flex justify-center items-center text-[1rem]
+            shadow-card uppercase cursor-pointer hover:border-mainBright hover:text-mainBright" [attr.strictness]="FilterStrictness.STRICT" (click)="SelectStrictness($event)" #filterStrictness>
+              Strict
+            </div>
+          </div>
+          <div class="grid">
+            <label class="text-[0.9rem]">Name</label>
+            <input class="w-[12rem] rounded-md outline-none pl-2 text-black" [formControl]="createFilterForm.controls.name">
           </div>
           <div class="w-full flex justify-end gap-x-2">
             <button type="button" class="bg-main hover:bg-mainBright relative text-[1rem] text-dark rounded-md w-fit p-1 pl-4 pr-4 

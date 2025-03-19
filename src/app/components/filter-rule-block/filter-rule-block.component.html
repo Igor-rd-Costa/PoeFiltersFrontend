@@ -1,0 +1,51 @@
+<div #wrapper>
+  <div id="filter-rule-heading" class="h-[3rem] bg-main w-full rounded-md flex items-center 
+  pl-4 hover:bg-mainBright cursor-pointer" (dragstart)="OnDragStart()" (click)="ToggleExpand()" draggable="true">
+    <h3 id="filter-rule-heading-content" class="grid grid-cols-[auto_auto_auto_auto_1fr] items-center gap-x-2 text-[1.1rem] text-dark w-full pr-4" draggable="false">
+      <span class="material-symbols-outlined text-[2.5rem]">
+        lists
+      </span>
+      <span draggable="false">{{ruleBlock().name}}</span>
+      @if (authService.IsAdmin() && editable) {
+        <span class="material-symbols-outlined text-[1.8rem] hover:text-[#333F]" (click)="EditRuleBlockInfo($event)" draggable="false">
+          edit
+        </span>
+        <span class="material-symbols-outlined text-[1.8rem] hover:text-[#333F]" (click)="Delete()" draggable="false">
+          delete
+        </span>
+        <span [style]="{rotate: isExpanded() ? '90deg' : '0deg'}" id="filter-rule-expand-icon" class="material-symbols-outlined justify-self-end" draggable="false">
+          chevron_right
+        </span>
+      }
+    </h3>
+  </div>
+  <div [style]="{height: isExpanded() ? 'fit-content' : '0px'}" id="filter-rule-content" class="overflow-hidden text-dark">
+    <div class="pl-4 pr-4">
+      @if (!isInEditMode()) {
+        <div id="filter-rule-drag-target" [attr.data-block]="blockId" [attr.data-ruleBlock]="ruleBlock().id" class="w-full grid justify-items-center pt-3 pb-3 h-fit" 
+        [attr.data-dragPosition]="0" (dragover)="OnDragOver($event)" (dragleave)="OnMouseLeave($event)">
+          <div class="w-[90%] h-[1px] pointer-events-none"></div>
+        </div>
+        @for (rule of ruleBlock().rules; track $index) {
+          <div class="w-full">
+            <app-filter-rule [itemCategories]="itemCategories" [ruleType]="ruleBlock().rulesType" [rule]="rule"/>
+            <div id="filter-rule-drag-target" [attr.data-block]="blockId" [attr.data-ruleBlock]="ruleBlock().id" class="w-full grid justify-items-center pt-3 pb-3 h-fit" 
+            [attr.data-dragPosition]="$index + 1" (dragover)="OnDragOver($event)" (dragleave)="OnMouseLeave($event)">
+              <div class="w-[90%] h-[1px] pointer-events-none"></div>
+            </div>
+          </div>
+        }
+        @if ((authService.IsAdmin() && editable) || ruleBlock().allowUserCreatedRules) {
+          <div id="filter-rule-heading" class="h-[3rem] mb-[calc(1.5rem+1px)] text-[1.5rem] text-dark bg-main w-full rounded-md flex items-center justify-center 
+          pl-4 hover:bg-mainBright cursor-pointer" (click)="CreateRule()">
+            Create Rule
+          </div>
+        }
+      } @else {
+        <div class="p-2 text-main border border-t-0 m-[0.3rem] gap-2 mt-0 bg-[#222F] border-main rounded-b-md shadow-card">
+          <app-rule-block-settings-form [ruleBlock]="ruleBlock()" (close)="OnSettingsClose()"/>
+        </div>
+      }
+    </div>
+  </div>
+</div>

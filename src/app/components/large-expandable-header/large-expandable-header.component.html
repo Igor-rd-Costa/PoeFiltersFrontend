@@ -1,0 +1,14 @@
+<div class="relative w-full select-none" #wrapper>
+  <div class="h-[2.25rem] bg-main w-full rounded-t-md cursor-pointer" #headingTop></div>
+  <h3 class="absolute top-0 left-0 w-full h-full pl-4 pr-4
+  text-[1.8rem] select-none cursor-pointer text-dark" (mouseenter)="OnHover()" (mouseleave)="OnLeave($event)" 
+  (click)="ToggleExpand()" (dragstart)="OnDragStart()" draggable="false" #headingContent>
+    <ng-content select="[heading]"/>
+  </h3>
+  <div style="height: 0" class="overflow-hidden" #content>
+  <div class="pl-4 pr-4 grid">
+    <ng-content select="[content]"/>
+  </div>
+  </div>
+  <div class="h-[2.25rem] bg-main w-full rounded-b-md cursor-pointer" #headingBottom></div>
+</div>

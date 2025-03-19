@@ -1,6 +1,6 @@
 import { Component, computed, ElementRef, ModelSignal, signal, ViewChild } from '@angular/core';
 import { Observable, Subscriber } from 'rxjs';
-import { RGBToHSV } from '../../../../../utils/helpers';
+import { RGBToHSV } from '../../../../../utils/Helpers';
 import { Color, ColorHSVA, ColorRGBA } from '../../../../../types/FilterTypes';
 
 @Component({

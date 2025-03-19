@@ -1,4 +1,8 @@
-export type FilterGame = "PoE1" | "PoE2"
+import { FilterBase, FilterBlockBase, FilterRuleBase, FilterRuleBlockBase, FilterSectionBase } from "./FilterBaseTypes"
+
+export enum FilterGame {
+  POE1, POE2
+}
 
 export type Color = {
   active: boolean,
@@ -67,77 +71,43 @@ export type DropPlayEffect = {
 export type RuleStyle = {
   id?: string,
   fontSize: number,
-  textColor: Color,
-  borderColor: Color,
-  backgroundColor: Color,
-  dropSound: DropSound,
-  dropIcon: DropIcon,
-  dropPlayEffect: DropPlayEffect
+  textColor: Color|null,
+  borderColor: Color|null,
+  backgroundColor: Color|null,
+  dropSound: DropSound|null,
+  dropIcon: DropIcon|null,
+  dropPlayEffect: DropPlayEffect|null
 }
 
 export type FilterRuleState = "Show"|"Hide"|"Disabled";
 
 export enum FilterRuleItemType {
-  RULE, RULE_BLOCK
+  RULE,
+  RULE_BLOCK,
 }
 
 export enum FilterRuleType {
-  RULE_MINIMAL, RULE_FULL
+  RULE_MINIMAL, 
+  RULE_FULL
 }
 
-export interface IPositionable {
-  position: number
+export enum FilterStrictness
+{
+    REGULAR, STRICT
 }
 
 export type FilterData = {
   id: string,
   name: string,
   modifiedAt: Date,
-  game: FilterGame
-}
-
-interface FilterBase {
-  id: string,
-  user: string|null,
-  name: string,
-  createdAt: Date,
-  modifiedAt: Date,
-  game: FilterGame,
-}
-
-interface FilterSectionBase {
-  id: string,
-  name: string,
-}
-
-interface FilterBlockBase {
-  id: string,
-  name: string,
-  imgSrc: string,
-  allowedCategories: string[],
-  rulesType: FilterRuleType,
-}
-
-interface FilterRuleBlockBase {
-  id: string,
-  name: string,
-  type: FilterRuleItemType,
-  allowUserCreatedRules: boolean,
-  rulesType: FilterRuleType
-}
-
-interface FilterRuleBase {
-  id: string,
-  type: FilterRuleItemType,
-  name: string,
-  state: FilterRuleState,
-  style: RuleStyle|string,
-  imgSrc: string,
-  items: string[],
 }
 
 
 export type Filter = FilterBase & {
+  user: string|null,
+  name: string,
+  createdAt: Date,
+  modifiedAt: Date,
   sections: FilterSection[]
 }
 
@@ -153,24 +123,8 @@ export type FilterRuleBlock = FilterRuleBlockBase & {
   rules: FilterRule[],
 }
 
-export type FilterRule = FilterRuleBase;
-
-
-
-export type FilterInfo = FilterBase & {
-  sections: FilterSectionInfo[],
-}
-
-export type FilterSectionInfo = IPositionable & FilterSectionBase & { 
-  blocks: FilterBlockInfo[],
-}
-
-export type FilterBlockInfo = IPositionable & FilterBlockBase & {
-  rules: (FilterRuleInfo|FilterRuleBlockInfo)[]
-}
-
-export type FilterRuleBlockInfo = IPositionable & FilterRuleBlockBase & {
-  rules: FilterRuleInfo[],
-}
-
-export type FilterRuleInfo = IPositionable & FilterRuleBase;
+export type FilterRule = FilterRuleBase & {
+  state: FilterRuleState,
+  style: RuleStyle|string,
+  items: string[],
+};

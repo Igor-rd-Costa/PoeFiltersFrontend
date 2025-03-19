@@ -1,12 +1,11 @@
-import { AfterViewInit, Component, effect, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, computed, ViewChild } from '@angular/core';
 import { FilterService } from '../../../services/FilterService';
 import { ColorPickerMenuComponent } from "./components/color-picker/color-picker.component";
 import { IconOptionsMenuComponent } from "./components/icon-options-menu/icon-options-menu.component";
 import { SoundMenuComponent } from "./components/sound-menu/sound-menu.component";
 import { PlayEffectMenuComponent } from "./components/play-effect-menu/play-effect-menu.component";
-import { FilterSectionComponent } from './components/filter-section/filter-section.component';
 import { AuthService } from '../../../services/AuthService';
-import { FilterSectionInfo } from '../../../types/FilterTypes';
+import { FilterSectionComponent } from '../../../components/filter-section/filter-section.component';
 
 
 @Component({
@@ -24,18 +23,10 @@ export class FilterViewComponent implements AfterViewInit {
   private static iconMenu: IconOptionsMenuComponent|null = null;
   private static soundMenu: SoundMenuComponent|null = null;
   private static playEffectMenu: PlayEffectMenuComponent|null = null;
-  protected sections : FilterSectionInfo[] = [];
-  constructor(protected filterService: FilterService, protected authService: AuthService) {
-    effect(() => {
-      const filter = this.filterService.Filter();
-      if (filter) {
-        this.sections = filter.sections;
-        if (this.sections.length === 0) {
-          this.filterService.CreateSection();
-        }
-      }
-    }, {allowSignalWrites: true})
-  }
+  protected sections = computed(() => {
+    return this.filterService.Filter()?.sections ?? [];
+  });
+  constructor(protected filterService: FilterService, protected authService: AuthService) {}
 
   ngAfterViewInit(): void {
     FilterViewComponent.colorPicker = this.colorPicker;
@@ -45,7 +36,7 @@ export class FilterViewComponent implements AfterViewInit {
   }
 
   CreateSection() {
-    this.filterService.CreateSection();
+    //this.filterService.CreateSection();
   }
 
   protected GetTemplateRows() {
