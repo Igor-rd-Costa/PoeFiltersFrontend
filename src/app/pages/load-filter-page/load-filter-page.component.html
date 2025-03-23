@@ -1,11 +1,20 @@
 <div class="w-full h-screen grid grid-rows-1 justify-items-center">
-  <div class="w-[50%] pt-4 pb-4 h-full rounded-md grid grid-rows-[auto_auto_1fr_auto]">
-    <h2 class="text-[2.5rem] h-[5rem] pt-2 pb-2 text-darkBright 
-    rounded-t-md bg-main w-full text-center shadow-card">
+  <div class="w-[50%] pt-4 pb-4 h-full rounded-md grid grid-rows-[auto_auto_auto_1fr]">
+    <h2 class="text-[2.5rem] h-[5rem] pt-2 pb-2 text-main w-full text-center">
       Load Filter
     </h2>
     @if (authService.IsLogged()) {
-      <li class="relative p-2 pl-4 pr-4 m-2 rounded-md bg-gradient-to-br from-[#333F] to-[#222F] text-[4rem] text-main 
+      <div class="w-full flex gap-2 justify-center">
+        <div class="border rounded-md border-main mt-2 bg-[#1A1A1AFF] text-main w-[6rem] h-[3.5rem] flex justify-center items-center text-[1.2rem]
+          shadow-card uppercase cursor-pointer hover:border-mainBright hover:text-mainBright" [attr.game]="FilterGame.POE1" (click)="SelectGame($event)" #gameSelectCard>
+          PoE1
+        </div>
+        <div class="border rounded-md border-main mt-2 bg-[#1A1A1AFF] text-main w-[6rem] h-[3.5rem] flex justify-center items-center text-[1.2rem]
+          shadow-card uppercase cursor-pointer hover:border-mainBright hover:text-mainBright" [attr.game]="FilterGame.POE2" (click)="SelectGame($event)" #gameSelectCard>
+          PoE2
+        </div>
+      </div>
+      <li class="relative p-2 pl-4 pr-4 m-2 mt-6 rounded-md bg-gradient-to-br from-[#333F] to-[#222F] text-[4rem] text-main 
       list-none hover:from-[#3A3A3AFF] hover:to-[#2A2A2AFF] shadow-card" #createWrapper>
         <form id="filter-create-form" class="text-[1rem] grid gap-y-2" [formGroup]="createFilterForm" (submit)="CreateFilter($event)">
           <h3 class="text-[1.3rem] flex justify-center mb-2">Create Filter</h3>
@@ -13,7 +22,7 @@
             @for (strictness of availableStrictnesses; track $index) {
               <div class="border rounded-md border-main  bg-[#1A1A1AFF] text-main w-[96px] h-[42px] flex justify-center items-center text-[1rem]
               shadow-card uppercase cursor-pointer hover:border-mainBright hover:text-mainBright" [attr.strictness]="strictness" (click)="SelectStrictness($event)" #filterStrictness>
-                Regular
+                {{GetStrictnessString(strictness)}}
               </div>
             }
           </div>
@@ -54,7 +63,6 @@
         </li>
       }
     </ul>
-    <div class="h-[5rem] rounded-b-md bg-main shadow-card"></div>
   </div>
   
 </div>

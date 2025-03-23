@@ -23,6 +23,13 @@ export class AppComponent implements AfterViewInit {
     return AppComponent.backend;
   }
 
+  static GetGame() {
+    return this.game();
+  }
+  static SetGame(game: FilterGame) {
+    this.game.set(game);
+  }
+
   static GameBackend() {
     return AppComponent.backend + ((this.game() === FilterGame.POE1) ? 'poe1/' : 'poe2/');
   }

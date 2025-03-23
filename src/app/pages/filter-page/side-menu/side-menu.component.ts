@@ -5,11 +5,12 @@ import { MenuItemComponent } from './menu-item/menu-item.component';
 import { AppView, ViewService } from '../../../services/ViewService';
 import { FilterService } from '../../../services/FilterService';
 import { AuthService } from '../../../services/AuthService';
+import { FilterGameSelectComponent } from "./filter-game-select/filter-game-select.component";
 
 @Component({
   selector: 'app-side-menu',
   standalone: true,
-  imports: [FilterSelectComponent, MenuSectionComponent, MenuItemComponent],
+  imports: [FilterSelectComponent, MenuSectionComponent, MenuItemComponent, FilterGameSelectComponent],
   templateUrl: './side-menu.component.html',
 })
 export class SideMenuComponent implements AfterViewInit {

@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable, signal } from "@angular/core";
+import { computed, Injectable, signal } from "@angular/core";
 import { AppComponent } from "../app.component";
 import { DropSoundInfo, Filter, FilterBlock, FilterRule, FilterRuleBlock, FilterRuleItemType, FilterSection, FilterStrictness, IconColor, IconShape, IconSize, RuleStyle } from "../types/FilterTypes";
 import { IPositionableSortFn } from "../utils/Helpers";
@@ -46,7 +46,9 @@ export const dropSounds: DropSoundInfo[] = [
 @Injectable()
 export class FilterService {
   private filter = signal<Filter|null>(null)
-  private backend = AppComponent.GameBackend() + 'filter/';
+  private backend = computed(() => {
+    return AppComponent.GameBackend() + 'filter/';
+  });
   private dragTarget: FilterBlock|FilterRuleBlock|FilterRule|null = null;
 
   constructor(private http: HttpClient) {
@@ -64,7 +66,7 @@ export class FilterService {
 
   LoadFilter(id: string) {
     return new Promise<boolean>(resolve => {
-      this.http.get<Filter>(this.backend + id + "/", {withCredentials: true}).subscribe({
+      this.http.get<Filter>(this.backend() + id + "/", {withCredentials: true}).subscribe({
         next: filter => {
           this.SetFilter(filter);
           resolve(true);
@@ -80,7 +82,7 @@ export class FilterService {
 
   GetFiltersInfo() {
     return new Promise<Filter[]>(resolve => {
-      this.http.get<Filter[]>(this.backend, {withCredentials: true}).subscribe({
+      this.http.get<Filter[]>(this.backend(), {withCredentials: true}).subscribe({
         next: (filters => {
           for (let i = 0; i < filters.length; i++) {
             filters[i].createdAt = new Date(filters[i].createdAt);
@@ -98,7 +100,7 @@ export class FilterService {
 
   CreateFilter(name: string, strictness: FilterStrictness) {
     return new Promise<boolean>(resolve => {
-      this.http.post<Filter|null>(this.backend, {name, strictness}, {withCredentials: true}).subscribe({
+      this.http.post<Filter|null>(this.backend(), {name, strictness}, {withCredentials: true}).subscribe({
         next: filter => {
           if (filter === null) {
             resolve(false);
@@ -118,7 +120,7 @@ export class FilterService {
 
   DeleteFilter(id: string) {
     return new Promise<boolean>(resolve => {
-      this.http.delete(this.backend, {body: {id: id}, withCredentials: true}).subscribe({
+      this.http.delete(this.backend(), {body: {id: id}, withCredentials: true}).subscribe({
         next: _ => {
           const f = this.filter();
           if (f !== null && f.id === id) {
@@ -141,7 +143,7 @@ export class FilterService {
         resolve();
         return;
       }
-      this.http.patch(this.backend, filter, {withCredentials: true}).subscribe({
+      this.http.patch(this.backend(), filter, {withCredentials: true}).subscribe({
         next: _ => {
           // Update session storage
           this.SetFilter(filter);
@@ -162,7 +164,7 @@ export class FilterService {
         resolve();
         return;
       }
-      this.http.get<string>(this.backend+'generate/'+filter.id, {withCredentials: true, responseType: 'text' as 'json'}).subscribe({
+      this.http.get<string>(this.backend()+'generate/'+filter.id, {withCredentials: true, responseType: 'text' as 'json'}).subscribe({
         next: filterStr => {
           const blob = new Blob([filterStr], { type: 'text/plain' });
           const url = window.URL.createObjectURL(blob);

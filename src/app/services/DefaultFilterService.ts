@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable, signal } from "@angular/core";
+import { computed, Injectable, signal } from "@angular/core";
 import { AppComponent } from "../app.component";
 import { FilterSection, FilterStrictness } from "../types/FilterTypes";
 import { FilterBase } from "../types/FilterBaseTypes";
@@ -14,7 +14,9 @@ export type DefaultFilter = FilterBase & {
   providedIn: 'root'
 })
 export class DefaultFilterService {
-  private backend = AppComponent.GameBackend() + 'default-filters/';
+  private backend = computed(() => {
+    return AppComponent.GameBackend() + 'default-filters/';
+  });
   private defaultFilters = signal<DefaultFilter[]>([]);
 
   public constructor(private http: HttpClient) {}
@@ -48,7 +50,7 @@ export class DefaultFilterService {
 
   private Get(strictness: FilterStrictness) {
     return new Promise<DefaultFilter|null>(resolve => {
-      this.http.get<DefaultFilter|null>(this.backend + `?strictness=${strictness}`, {withCredentials: true}).subscribe({
+      this.http.get<DefaultFilter|null>(this.backend() + `?strictness=${strictness}`, {withCredentials: true}).subscribe({
         next: defaultFilter => {
           if (defaultFilter === null) {
             resolve(null);
@@ -66,7 +68,7 @@ export class DefaultFilterService {
 
   private GetDefaultFilterVersion(strictness: FilterStrictness) {
     return new Promise<number>(resolve => {
-      this.http.get<number>(this.backend + `version?strictness=${strictness}`, {withCredentials: true}).subscribe({
+      this.http.get<number>(this.backend() + `version?strictness=${strictness}`, {withCredentials: true}).subscribe({
         next: version => {
           resolve(version);
         },
@@ -80,7 +82,7 @@ export class DefaultFilterService {
 
   public GetAvailableStrictnesses() {
     return new Promise<FilterStrictness[]>(resolve => {
-      this.http.get<FilterStrictness[]>(this.backend + "strictnesses", {withCredentials: true}).subscribe({
+      this.http.get<FilterStrictness[]>(this.backend() + "strictnesses", {withCredentials: true}).subscribe({
         next: s => {
           resolve(s);
         },

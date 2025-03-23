@@ -1,0 +1,10 @@
+<div class="w-full flex gap-2 justify-center">
+  <div class="border rounded-md border-main mt-2 bg-[#1A1A1AFF] text-main w-[4rem] h-[2.5rem] flex justify-center items-center text-[1.2rem]
+    shadow-card font-mono cursor-pointer hover:border-mainBright hover:text-mainBright" [attr.game]="FilterGame.POE1" (click)="SelectGame($event)" #gameSelectCard>
+    PoE1
+  </div>
+  <div class="border rounded-md border-main mt-2 bg-[#1A1A1AFF] text-main w-[4rem] h-[2.5rem] flex justify-center items-center text-[1.2rem]
+    shadow-card font-mono cursor-pointer hover:border-mainBright hover:text-mainBright" [attr.game]="FilterGame.POE2" (click)="SelectGame($event)" #gameSelectCard>
+    PoE2
+  </div>
+</div>

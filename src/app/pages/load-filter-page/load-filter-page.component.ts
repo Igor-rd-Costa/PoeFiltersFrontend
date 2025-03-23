@@ -1,11 +1,12 @@
 import { AfterViewInit, Component, effect, ElementRef, QueryList, signal, ViewChild, ViewChildren } from '@angular/core';
 import { FilterService } from '../../services/FilterService';
 import { AppView, ViewService } from '../../services/ViewService';
-import { GetHTMLContentHeight } from '../../utils/Helpers';
+import { GetHTMLContentHeight, GetStrictnessString } from '../../utils/Helpers';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/AuthService';
-import { FilterData, FilterStrictness } from '../../types/FilterTypes';
+import { FilterData, FilterGame, FilterStrictness } from '../../types/FilterTypes';
 import { DefaultFilterService } from '../../services/DefaultFilterService';
+import { AppComponent } from '../../app.component';
 
 @Component({
   selector: 'app-load-filter-page',
@@ -21,7 +22,9 @@ import { DefaultFilterService } from '../../services/DefaultFilterService';
 })
 export class LoadFilterPageComponent implements AfterViewInit {
   FilterStrictness = FilterStrictness;
+  FilterGame = FilterGame;
   @ViewChild("createWrapper") createWrapper!: ElementRef<HTMLElement>;
+  @ViewChildren("gameSelectCard") gameSelectCards!: QueryList<ElementRef<HTMLElement>>;
   @ViewChildren("filterStrictness") strictnessElements!: QueryList<ElementRef<HTMLElement>>;
   protected isCreateFilterVisible = signal<boolean>(false);
   protected availableStrictnesses: FilterStrictness[] = [];
@@ -29,21 +32,49 @@ export class LoadFilterPageComponent implements AfterViewInit {
     name: new FormControl("", [Validators.required]),
     strictness: new FormControl<FilterStrictness>(FilterStrictness.REGULAR)
   });
+  private game = signal<FilterGame>(FilterGame.POE2);
   private filterStrictnessElement: HTMLElement|null = null;
+  private filterGameElement: HTMLElement|null = null;
   protected filters: FilterData[] = [];
 
-  constructor(private filterService: FilterService, private defaultFilterService: DefaultFilterService, private viewService: ViewService, protected authService: AuthService) {
+  constructor(private filterService: FilterService, private defaultFilterService: DefaultFilterService, 
+    private viewService: ViewService, protected authService: AuthService) {
     effect(() => {
       const logged = this.authService.IsLogged();
+      const game = AppComponent.GetGame();
       if (logged) {
         this.filterService.GetFiltersInfo().then(filters => {
           this.filters = filters;
         });
         this.defaultFilterService.GetAvailableStrictnesses().then(s => {
-          this.availableStrictnesses = s;
+          this.availableStrictnesses = s.sort();
         });
       }
     });
+
+    effect(() => {
+      const game = this.game();
+      for (let i = 0; i < this.gameSelectCards.length; i++) {
+        const element = this.gameSelectCards.get(i);
+        if (element === undefined) {
+          break;
+        }
+        const gameAttrStr = element.nativeElement.getAttribute("game");
+        if (gameAttrStr === null) {
+          continue;
+        }
+        const gameAttr: FilterGame = parseInt(gameAttrStr);
+        if (isNaN(gameAttr)) {
+          continue;
+        }
+        element.nativeElement.classList.remove("selected");
+        if (gameAttr === game) {
+          element.nativeElement.classList.add("selected");
+          continue;
+        }
+      }
+      AppComponent.SetGame(game);
+    }, {allowSignalWrites: true})
   }
   
   async ngAfterViewInit() {
@@ -57,6 +88,44 @@ export class LoadFilterPageComponent implements AfterViewInit {
         }
       }
     });
+    this.gameSelectCards.changes.subscribe(_ => {
+      for (let i = 0; i < this.gameSelectCards.length; i++) {
+        const gameStr = this.gameSelectCards.get(i)!.nativeElement.getAttribute("game");
+        if (gameStr === null) {
+          continue;
+        }
+        const game: FilterGame = parseInt(gameStr);
+        if (isNaN(game)) {
+          continue;
+        }
+        if (this.game() === game) {
+          this.filterGameElement = this.gameSelectCards.get(i)!.nativeElement;
+          this.filterGameElement.classList.add("selected");
+        }
+      }
+    })
+
+    
+  }
+
+  protected GetStrictnessString = GetStrictnessString; 
+
+  SelectGame(event: MouseEvent) {
+    if (event.target === null) {
+      return;
+    }
+    event.stopPropagation();
+    const t = event.target as HTMLElement;
+
+    const gameStr = t.getAttribute("game");
+    if (gameStr === null) {
+      return;
+    }
+    const game: FilterGame = parseInt(gameStr);
+    if (isNaN(game)) {
+      return;
+    }
+    this.game.set(game);
   }
 
   SelectStrictness(event: MouseEvent) {
@@ -70,7 +139,7 @@ export class LoadFilterPageComponent implements AfterViewInit {
       return;
     }
     const strictness = parseInt(strictnessStr) as FilterStrictness;
-    if (t === this.filterStrictnessElement) {
+    if (isNaN(strictness) || t === this.filterStrictnessElement) {
       return;
     }
     this.createFilterForm.controls.strictness.setValue(strictness);
