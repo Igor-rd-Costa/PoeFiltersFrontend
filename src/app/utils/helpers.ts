@@ -1,4 +1,4 @@
-import { ColorHSV, ColorRGB } from "../types/FilterTypes";
+import { ColorHSV, ColorRGB, FilterStrictness } from "../types/FilterTypes";
 import { IPositionable } from "../types/FilterBaseTypes";
 
 export function GetHTMLContentHeight(element: HTMLElement) {
@@ -54,4 +54,16 @@ export function IPositionableSortFn(a: IPositionable, b: IPositionable) {
     return -1;
   }
   return 1;
+}
+
+export function GetStrictnessString(strictness: FilterStrictness) {
+  switch (strictness) {
+    case FilterStrictness.REGULAR: return "Regular";
+    case FilterStrictness.STRICT: return "Strict";  
+    case FilterStrictness.MAX_VALUE: return "";
+    default: {
+      console.error("GetStrictnessString not implemented for FilterStrictness " + strictness);
+      return "";
+    }
+  }
 }

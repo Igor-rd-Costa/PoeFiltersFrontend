@@ -5,12 +5,14 @@
       Strictness
     </h3>
 
-    <div class="w-full flex mt-2 items-center justify-center">
+    <div class="w-full flex mt-2 items-center gap-2 justify-center">
 
-      <div class="border rounded-md border-main mt-2 bg-[#1A1A1AFF] text-main w-[6rem] h-[3.5rem] flex justify-center items-center text-[1.2rem]
-        shadow-card uppercase cursor-pointer hover:border-mainBright hover:text-mainBright" (click)="SelectStrictness($event, FilterStrictness.REGULAR)">
-        Regular
-      </div>
+      @for (strictness of GetStrictnesses(); track $index) {
+        <div class="border rounded-md border-main mt-2 bg-[#1A1A1AFF] text-main w-[6rem] h-[3.5rem] flex justify-center items-center text-[1.2rem]
+          shadow-card uppercase cursor-pointer hover:border-mainBright hover:text-mainBright" [attr.strictness]="strictness" (click)="SelectStrictness($event)">
+          {{GetStrictnessString(strictness)}}
+        </div>
+      }
 
     </div>
   </div>

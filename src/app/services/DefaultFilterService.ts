@@ -77,4 +77,18 @@ export class DefaultFilterService {
       })
     });
   }
+
+  public GetAvailableStrictnesses() {
+    return new Promise<FilterStrictness[]>(resolve => {
+      this.http.get<FilterStrictness[]>(this.backend + "strictnesses", {withCredentials: true}).subscribe({
+        next: s => {
+          resolve(s);
+        },
+        error: err => {
+          console.error(err);
+          resolve([]);
+        }
+      })
+    });
+  }
 }

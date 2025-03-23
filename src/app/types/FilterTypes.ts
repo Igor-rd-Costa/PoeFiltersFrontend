@@ -93,7 +93,7 @@ export enum FilterRuleType {
 
 export enum FilterStrictness
 {
-    REGULAR, STRICT
+    REGULAR, STRICT, MAX_VALUE
 }
 
 export type FilterData = {

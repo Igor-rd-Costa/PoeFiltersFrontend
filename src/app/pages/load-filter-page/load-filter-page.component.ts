@@ -5,6 +5,7 @@ import { GetHTMLContentHeight } from '../../utils/Helpers';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/AuthService';
 import { FilterData, FilterStrictness } from '../../types/FilterTypes';
+import { DefaultFilterService } from '../../services/DefaultFilterService';
 
 @Component({
   selector: 'app-load-filter-page',
@@ -23,19 +24,23 @@ export class LoadFilterPageComponent implements AfterViewInit {
   @ViewChild("createWrapper") createWrapper!: ElementRef<HTMLElement>;
   @ViewChildren("filterStrictness") strictnessElements!: QueryList<ElementRef<HTMLElement>>;
   protected isCreateFilterVisible = signal<boolean>(false);
+  protected availableStrictnesses: FilterStrictness[] = [];
   protected createFilterForm = new FormGroup({
     name: new FormControl("", [Validators.required]),
     strictness: new FormControl<FilterStrictness>(FilterStrictness.REGULAR)
   });
-  private filterStrictnessElement: HTMLElement|null = null
+  private filterStrictnessElement: HTMLElement|null = null;
   protected filters: FilterData[] = [];
 
-  constructor(private filterService: FilterService, private viewService: ViewService, protected authService: AuthService) {
+  constructor(private filterService: FilterService, private defaultFilterService: DefaultFilterService, private viewService: ViewService, protected authService: AuthService) {
     effect(() => {
       const logged = this.authService.IsLogged();
       if (logged) {
         this.filterService.GetFiltersInfo().then(filters => {
           this.filters = filters;
+        });
+        this.defaultFilterService.GetAvailableStrictnesses().then(s => {
+          this.availableStrictnesses = s;
         });
       }
     });

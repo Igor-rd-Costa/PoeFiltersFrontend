@@ -10,15 +10,12 @@
         <form id="filter-create-form" class="text-[1rem] grid gap-y-2" [formGroup]="createFilterForm" (submit)="CreateFilter($event)">
           <h3 class="text-[1.3rem] flex justify-center mb-2">Create Filter</h3>
           <div class="flex gap-2 justify-center">
-            <div class="border rounded-md border-main  bg-[#1A1A1AFF] text-main w-[96px] h-[42px] flex justify-center items-center text-[1rem]
-            shadow-card uppercase cursor-pointer hover:border-mainBright hover:text-mainBright" [attr.strictness]="FilterStrictness.REGULAR" (click)="SelectStrictness($event)" #filterStrictness>
-              Regular
-            </div>
-
-            <div class="border rounded-md border-main  bg-[#1A1A1AFF] text-main w-[96px] h-[42px] flex justify-center items-center text-[1rem]
-            shadow-card uppercase cursor-pointer hover:border-mainBright hover:text-mainBright" [attr.strictness]="FilterStrictness.STRICT" (click)="SelectStrictness($event)" #filterStrictness>
-              Strict
-            </div>
+            @for (strictness of availableStrictnesses; track $index) {
+              <div class="border rounded-md border-main  bg-[#1A1A1AFF] text-main w-[96px] h-[42px] flex justify-center items-center text-[1rem]
+              shadow-card uppercase cursor-pointer hover:border-mainBright hover:text-mainBright" [attr.strictness]="strictness" (click)="SelectStrictness($event)" #filterStrictness>
+                Regular
+              </div>
+            }
           </div>
           <div class="grid">
             <label class="text-[0.9rem]">Name</label>
